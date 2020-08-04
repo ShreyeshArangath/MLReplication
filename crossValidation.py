@@ -33,14 +33,17 @@ greyc_normal_dataset = pd.read_csv("greyc_normal.csv")
 dataframe=pd.concat([greycweb_dataset, greyc_normal_dataset])
 
 X=dataframe.iloc[:,2:].values
+print(X)
 y=dataframe.iloc[:,1].values
+print(y)
+
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_state=61)
 
 scaler = StandardScaler()
-X_new = scaler.fit_transform(X)
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
 
-X_train,X_test,y_train,y_test=train_test_split(X_new,y,test_size=0.2,random_state=61)
-
-classifier = RandomForestClassifier(random_state = 23)
+classifier = RandomForestClassifier(max_depth=15, random_state = 23)
 classifier.fit(X_train, y_train)
 y_pred = classifier.predict(X_test)
 print ("Accuracy Score : {}%".format(accuracy_score(y_test, y_pred)*100))
@@ -48,10 +51,15 @@ print ("Accuracy Score : {}%".format(accuracy_score(y_test, y_pred)*100))
 
 #Cross-Validation
 scores = [] #Keeps track of the accuracy scores
-clf = RandomForestClassifier(random_state = 23)
-cv = KFold(n_splits=3, random_state=42, shuffle=True) # The number of folds can be changed here
-for train_index, test_index in cv.split(X_new):
-    X_train, X_test, y_train, y_test = X_new[train_index], X_new[test_index], y[train_index], y[test_index]
+clf = RandomForestClassifier(max_depth=15, random_state = 23)
+cv = KFold(n_splits=10, random_state=42, shuffle=True) # The number of folds can be changed here
+for train_index, test_index in cv.split(X):
+    X_train, X_test, y_train, y_test = X[train_index], X[test_index], y[train_index], y[test_index]
+
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
     scores.append(accuracy_score(y_test, y_pred)*100)
