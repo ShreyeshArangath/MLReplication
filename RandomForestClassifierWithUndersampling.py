@@ -15,7 +15,7 @@ def _getDataFilePath(fileName):
     return os.path.join(dataPath+os.sep, fileName)
 
 def _getDigraphFrequencies(dataframe):
-    """Returns the digraph frequencies within a database."""
+    """Returns the digraph frequencies within a dataframe."""
     return dataframe.groupby("digraph").count()
 
 def _perfectTestSplit(dataframe, test_size=0.2):
