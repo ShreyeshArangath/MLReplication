@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import scipy as sp
 import pandas as pd
@@ -8,11 +9,16 @@ from imblearn.under_sampling import NearMiss
 from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import StandardScaler
 
+dataPath = os.path.join(os.getcwd(),"Data")
+
+def _getDataFilePath(fileName):
+    return os.path.join(dataPath+os.sep, fileName)
+
 # Importing datasets
-msu_dataset=pd.read_csv("msuupdated.csv")
-stony_dataset = pd.read_csv("stonybrooksdataset_updated.csv")
-greycweb_dataset = pd.read_csv("greycwebdata.csv")
-greyc_normal_dataset = pd.read_csv("greyc_normal.csv")
+msu_dataset=pd.read_csv(_getDataFilePath("msuupdated.csv"))
+stony_dataset = pd.read_csv(_getDataFilePath("stonybrooksdataset_updated.csv"))
+greycweb_dataset = pd.read_csv(_getDataFilePath("greycwebdata.csv"))
+greyc_normal_dataset = pd.read_csv(_getDataFilePath("greyc_normal.csv"))
 
 # Splitting the datasets for undersampling 
 dataframe=pd.concat([ msu_dataset, greycweb_dataset, greyc_normal_dataset])
