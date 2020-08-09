@@ -36,7 +36,11 @@ def _perfectTestSplit(dataframe, test_size=0.2):
         
     return train_dataframe, test_dataframe
 
-
+def _getBinCount(np_array):
+    classes, indices = np.unique(np_array, return_inverse=True)
+    class_counts = np.bincount(indices)
+    return classes, indices, class_counts
+    
 # Importing datasets
 msu_dataset=pd.read_csv(_getDataFilePath("msuupdated.csv"))
 stony_dataset = pd.read_csv(_getDataFilePath("stonybrooksdataset_updated.csv"))
@@ -61,25 +65,69 @@ undersampled_dataframe.insert(0, "digraph", y_under)
 
 # Preprocessing 
 final_dataframe = pd.concat([undersampled_dataframe, dataframe_with_less_than_1000_samples])
+X=final_dataframe.iloc[:,1:].values
+y=final_dataframe.iloc[:,0].values
+
 _getDigraphFrequencies(final_dataframe)
 
 ## Splitting test data as perfectly balanced
-train_dataframe, test_dataframe = _perfectTestSplit(final_dataframe)
+#train_dataframe, test_dataframe = _perfectTestSplit(final_dataframe)
+unique_digraph_set = set(final_dataframe['digraph']) 
+X_train, X_test , y_train , y_test = train_test_split(X, y, test_size=0.75, random_state = 0)
+classes, y_indices = np.unique(y_test, return_inverse=True)
+class_counts = np.bincount(y_indices)
 
-X_train=train_dataframe.iloc[:,1:].values
-y_train=train_dataframe.iloc[:,0].values
+print(np.min(class_counts))
+discard_indices = []
+x_discard = []
+y_discard = []
+y_test_copy = y_test.copy()
+instance_counter = 0
+for digraph in unique_digraph_set: 
+    for i in range(len(y_test)):
+        if y_test[i]== digraph and instance_counter<=np.min(class_counts):
+            instance_counter+=1
+        elif y_test[i]==digraph and instance_counter>np.min(class_counts):
+            x_discard.append(X_test[i])
+            y_discard.append(y_test[i])
+            discard_indices.append(i)
+    instance_counter = 0
 
-X_test=test_dataframe.iloc[:,1:].values
-y_test=test_dataframe.iloc[:,0].values
+y_test_copy = y_test.copy() 
+y_test_balanced = []
+y_test_discard = []
+X_test_balanced = []
+X_test_discard = []
+indices_to_discard = []   
+for digraph in unique_digraph_set: 
+    digraph_indices = y_test == digraph
+    indices = (np.where(y_test==digraph))[0]
+    indices_to_keep = indices[:np.min(class_counts)]
+    indices_to_discard = indices[np.min(class_counts):]
+    y_test_balanced.extend(np.array(y_test)[indices_to_keep])
+    y_test_discard.extend(np.array(y_test)[indices_to_discard])
+    X_test_balanced.extend(np.array(X_test)[indices_to_keep])
+    X_test_discard.extend(np.array(X_test)[indices_to_discard])
+
+X_test_discard= np.array(X_test_discard)
+X_test_balanced = np.array(X_test_balanced)
+y_test_balanced = np.array(y_test_balanced)
+y_test_discard = np.array(y_test_discard)
+
+X_train_updated = np.concatenate((X_train, X_test_discard))
+y_train_updated = np.concatenate((y_train, y_test_discard))
+
+classes, indices, class_counts=_getBinCount(y_test_balanced)
+print(class_counts)
 
 scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
+X_train_updated = scaler.fit_transform(X_train_updated)
+X_test_balanced = scaler.transform(X_test_balanced)
 
 #Classification
 classifier = RandomForestClassifier(random_state = 23)
-classifier.fit(X_train, y_train)
+classifier.fit(X_train_updated, y_train_updated)
 
-y_pred = classifier.predict(X_test)
-print ("Accuracy Score : {}%".format(accuracy_score(y_test, y_pred)*100))
+y_pred = classifier.predict(X_test_balanced)
+print ("Accuracy Score : {}%".format(accuracy_score(y_test_balanced, y_pred)*100))
 
