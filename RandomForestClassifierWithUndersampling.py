@@ -86,7 +86,7 @@ greycweb_dataset = pd.read_csv(_getDataFilePath("greycwebdata.csv"))
 greyc_normal_dataset = pd.read_csv(_getDataFilePath("greyc_normal.csv"))
 
 # Splitting the datasets for undersampling 
-dataframe=pd.concat([ greycweb_dataset, greyc_normal_dataset])
+dataframe=pd.concat([ msu_dataset ,greycweb_dataset, greyc_normal_dataset])
 dataframe=dataframe.groupby("digraph").filter(lambda x: len(x) > 100)
 dataframe_with_less_than_1000_samples = dataframe.groupby("digraph").filter(lambda x: len(x) < 1000) 
 dataframe_to_undersample = dataframe.groupby("digraph").filter(lambda x: len(x) >= 1000)
