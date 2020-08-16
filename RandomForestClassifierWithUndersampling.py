@@ -1,4 +1,5 @@
 import numpy as np
+import random
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -120,12 +121,28 @@ classifier.fit(X_train, y_train)
 
 
 ### Preprocessing for classification
+
 relevantRockYouPasswords = parser.extractAllRelevantPasswords(rockYouDataframe, relevantDigraphDataframe)
+
+def _valueAtIndices(value, array):
+    return [index for index, val in enumerate(y_test) if val==value]
+
+def _getFeaturesAndLabelsForPassword(password, X_test, y_test):
+    digraphArray = parser.getDigraphs(password)
+    testFeaturesForPassword = []
+    testLabels = []
+    for digraph in digraphArray: 
+        occurencesOfDigraph = _valueAtIndices(digraph, y_test)
+        randomTestIndex = random.randint(occurencesOfDigraph[0], occurencesOfDigraph[-1])
+        testFeaturesForPassword.append(X_test[randomTestIndex])
+        testLabels.append(y_test[randomTestIndex])
+    testFeaturesForPassword = np.array(testFeaturesForPassword)
+    
+    return testFeaturesForPassword, testLabels
+
+        
 testPassword = relevantRockYouPasswords[0]
-digraphArray = parser.getDigraphs(testPassword)
-indicesForFirstDigraph =  [i for i,val in enumerate(y_test) if val==digraphArray[0]]
-
-
+testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, X_test, y_test)    
 
 
 y_pred = classifier.predict(X_test)
