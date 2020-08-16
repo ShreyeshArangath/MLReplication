@@ -1,19 +1,16 @@
-import os
 import numpy as np
-import scipy as sp
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, recall_score, accuracy_score
 from imblearn.under_sampling import NearMiss
-from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import StandardScaler
 
-dataPath = os.path.join(os.getcwd(),"Data")
+from path import Path
+from parser import RockYouDatasetParser
 
-
-def _getDataFilePath(fileName):
-    return os.path.join(dataPath+os.sep, fileName)
+path = Path()
+parser = RockYouDatasetParser()
 
 def _getDigraphFrequencies(dataframe):
     """Returns the digraph frequencies within a dataframe."""
@@ -79,10 +76,12 @@ def _trainTestSplit(final_dataframe, test_size=0.2):
 
     
 # Importing datasets
-msu_dataset=pd.read_csv(_getDataFilePath("msuupdated.csv"))
-stony_dataset = pd.read_csv(_getDataFilePath("stonybrooksdataset_updated.csv"))
-greycweb_dataset = pd.read_csv(_getDataFilePath("greycwebdata.csv"))
-greyc_normal_dataset = pd.read_csv(_getDataFilePath("greyc_normal.csv"))
+msu_dataset=pd.read_csv(path.getDataFilePath("msuupdated.csv"))
+stony_dataset = pd.read_csv(path.getDataFilePath("stonybrooksdataset_updated.csv"))
+greycweb_dataset = pd.read_csv(path.getDataFilePath("greycwebdata.csv"))
+greyc_normal_dataset = pd.read_csv(path.getDataFilePath("greyc_normal.csv"))
+rockYouDataframe = pd.read_csv(path.getDataFilePath("rockyou8subset.csv"))
+relevantDigraphDataframe = pd.read_csv(path.getDataFilePath("uniqueDigraphs.csv"))
 
 # Splitting the datasets for undersampling 
 dataframe=pd.concat([ msu_dataset ,greycweb_dataset, greyc_normal_dataset])
@@ -112,11 +111,22 @@ scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-final_dataframe['digraph'].drop_duplicates().to_csv("digraph.csv", index=False)
-
 #Classification
 classifier = RandomForestClassifier(random_state = 23)
 classifier.fit(X_train, y_train)
+
+
+
+
+
+### Preprocessing for classification
+relevantRockYouPasswords = parser.extractAllRelevantPasswords(rockYouDataframe, relevantDigraphDataframe)
+testPassword = relevantRockYouPasswords[0]
+digraphArray = parser.getDigraphs(testPassword)
+indicesForFirstDigraph =  [i for i,val in enumerate(y_test) if val==digraphArray[0]]
+
+
+
 
 y_pred = classifier.predict(X_test)
 print ("Accuracy Score : {}%".format(accuracy_score(y_test, y_pred)*100))
