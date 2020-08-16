@@ -1,6 +1,4 @@
 import os
-
-
 import numpy as np
 import scipy as sp
 import pandas as pd
@@ -12,6 +10,7 @@ from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import StandardScaler
 
 dataPath = os.path.join(os.getcwd(),"Data")
+
 
 def _getDataFilePath(fileName):
     return os.path.join(dataPath+os.sep, fileName)
@@ -112,6 +111,8 @@ X_train, X_test, y_train, y_test = _trainTestSplit(final_dataframe, 0.75)
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
+
+final_dataframe['digraph'].drop_duplicates().to_csv("digraph.csv", index=False)
 
 #Classification
 classifier = RandomForestClassifier(random_state = 23)
