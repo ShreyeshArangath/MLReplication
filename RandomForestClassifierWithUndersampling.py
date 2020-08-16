@@ -1,4 +1,5 @@
 import numpy as np
+import itertools
 import random
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -6,6 +7,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, recall_score, accuracy_score
 from imblearn.under_sampling import NearMiss
 from sklearn.preprocessing import StandardScaler
+import pickle
+import joblib
 
 from path import Path
 from parser import RockYouDatasetParser
@@ -116,13 +119,10 @@ X_test = scaler.transform(X_test)
 classifier = RandomForestClassifier(random_state = 23)
 classifier.fit(X_train, y_train)
 
-
-
-
-
 ### Preprocessing for classification
 
 relevantRockYouPasswords = parser.extractAllRelevantPasswords(rockYouDataframe, relevantDigraphDataframe)
+unique_digraph_set = set(final_dataframe['digraph']) 
 
 def _valueAtIndices(value, array):
     return [index for index, val in enumerate(y_test) if val==value]
@@ -137,15 +137,55 @@ def _getFeaturesAndLabelsForPassword(password, X_test, y_test):
         testFeaturesForPassword.append(X_test[randomTestIndex])
         testLabels.append(y_test[randomTestIndex])
     testFeaturesForPassword = np.array(testFeaturesForPassword)
+    testLabels = np.array(testLabels)
     
     return testFeaturesForPassword, testLabels
 
-        
-testPassword = relevantRockYouPasswords[0]
-testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, X_test, y_test)    
+def _get_top_probabilities(classifier, pred_prob_arr):
+    return dict(sorted(dict(zip(classifier.classes_,pred_prob_arr)).items(), key=lambda x:x[1], reverse=True))
+    
+def get_top_digraphs(classifier,pred_prob_arr, no_of_digraphs=10):
+    return list(_get_top_probabilities(classifier,pred_prob_arr).keys())[:no_of_digraphs]
+
+def generate_words(arr_of_digraphs):
+    pred_word = []
+    for digraph_tuple in itertools.product(*arr_of_digraphs):
+         pred_word.append(''.join(digraph_tuple))
+    return pred_word
+
+def calculatePenaltyScore(digraphProbabilites, testLabels):
+    penaltyScore = 0
+    diCount = 0
+    for i in range(len(digraphProbabilites)): 
+        allDigraphsFound = True 
+        row = digraphProbabilites[i]
+        for j in range(len(row)):
+            if row[j]==testLabels[i]:
+                diCount+=1
+                penaltyScore+= (j+1)
+                break
+            else: 
+                allDigraphsFound = False
+    if diCount!=7:
+        print("Error.")
+    return penaltyScore
+
+penaltyScores = {}
+for password in relevantRockYouPasswords:
+    testPassword = password
+    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, X_test, y_test)    
+
+    predictedProbabilites = classifier.predict_proba(testFeatures)
+    digraph_prob=[]
+    for row in predictedProbabilites:
+        digraph_prob.append(get_top_digraphs(classifier,row, 307))
+    
+    penaltyScores[testPassword] = calculatePenaltyScore(digraph_prob, testLabels)
+#    print(f"{testPassword}: {calculatePenaltyScore(digraph_prob, testLabels)}")
 
 
-y_pred = classifier.predict(X_test)
-print ("Accuracy Score : {}%".format(accuracy_score(y_test, y_pred)*100))
 
+#y_pred = classifier.predict(X_test)
+#print ("Accuracy Score : {}%".format(accuracy_score(y_test, y_pred)*100))
+#
 
