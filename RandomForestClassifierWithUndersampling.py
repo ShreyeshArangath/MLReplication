@@ -9,12 +9,11 @@ from imblearn.under_sampling import NearMiss
 from sklearn.preprocessing import StandardScaler
 import pickle
 import joblib
+import RockYouDatasetParser 
+import SystemPath
 
-from path import Path
-from parser import RockYouDatasetParser
-
-path = Path()
-parser = RockYouDatasetParser()
+path = SystemPath.Path()
+parser = RockYouDatasetParser.RockYouDatasetParser()
 
 def _getDigraphFrequencies(dataframe):
     """Returns the digraph frequencies within a dataframe."""
@@ -86,6 +85,7 @@ greycweb_dataset = pd.read_csv(path.getDataFilePath("greycwebdata.csv"))
 greyc_normal_dataset = pd.read_csv(path.getDataFilePath("greyc_normal.csv"))
 rockYouDataframe = pd.read_csv(path.getDataFilePath("rockyou8subset.csv"))
 relevantDigraphDataframe = pd.read_csv(path.getDataFilePath("uniqueDigraphs.csv"))
+originalRockYouDataframeWithCount = pd.read_csv(path.getDataFilePath("rockyoudataset.csv"))
 
 # Splitting the datasets for undersampling 
 dataframe=pd.concat([ msu_dataset ,greycweb_dataset, greyc_normal_dataset])
@@ -141,6 +141,18 @@ def _getFeaturesAndLabelsForPassword(password, X_test, y_test):
     
     return testFeaturesForPassword, testLabels
 
+def _getFeaturesAndLabelsOffseted(password, X_test, y_test, offset = 0.2):
+    digraphArray = parser.getDigraphs(password)
+    testFeaturesForPassword = []
+    testLabels = []
+    for digraph in digraphArray: 
+        occurencesOfDigraph = _valueAtIndices(digraph, y_test)
+        randomTestIndex = random.randint(occurencesOfDigraph[0], occurencesOfDigraph[-1])
+        testFeaturesForPassword.append(X_test[randomTestIndex])
+        testLabels.append(y_test[randomTestIndex])
+    testFeaturesForPassword = np.array(testFeaturesForPassword)
+    testLabels = np.array(testLabels)
+
 def _get_top_probabilities(classifier, pred_prob_arr):
     return dict(sorted(dict(zip(classifier.classes_,pred_prob_arr)).items(), key=lambda x:x[1], reverse=True))
     
@@ -157,21 +169,18 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
     penaltyScore = 0
     diCount = 0
     for i in range(len(digraphProbabilites)): 
-        allDigraphsFound = True 
         row = digraphProbabilites[i]
         for j in range(len(row)):
             if row[j]==testLabels[i]:
                 diCount+=1
                 penaltyScore+= (j+1)
                 break
-            else: 
-                allDigraphsFound = False
     if diCount!=7:
         print("Error.")
     return penaltyScore
 
 penaltyScores = {}
-for password in relevantRockYouPasswords:
+for password in relevantRockYouPasswords[:10]:
     testPassword = password
     testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, X_test, y_test)    
 
@@ -181,6 +190,27 @@ for password in relevantRockYouPasswords:
         digraph_prob.append(get_top_digraphs(classifier,row, 307))
     
     penaltyScores[testPassword] = calculatePenaltyScore(digraph_prob, testLabels)
+    index = originalRockYouDataframeWithCount.index[originalRockYouDataframeWithCount['password']== testPassword].tolist()[0]
+    occurences = originalRockYouDataframeWithCount.iloc[index]['count']
+    
+    print(f"{testPassword} — Penalty:{calculatePenaltyScore(digraph_prob, testLabels)}", end=' ')
+    print("Guess:",index, " Occurences:",occurences )
+
+
+## Adding Threshold
+
+#penaltyScoresWithOffset = {}
+#for password in relevantRockYouPasswords:
+#    testPassword = password
+#    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, X_test, y_test)    
+#
+#    predictedProbabilites = classifier.predict_proba(testFeatures)
+#    digraph_prob=[]
+#    for row in predictedProbabilites:
+#        digraph_prob.append(get_top_digraphs(classifier,row, 307))
+#    
+#    penaltyScores[testPassword] = calculatePenaltyScore(digraph_prob, testLabels)
+    
 #    print(f"{testPassword}: {calculatePenaltyScore(digraph_prob, testLabels)}")
 
 
