@@ -173,7 +173,7 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
     return penaltyScore
 
 penaltyScores = {}
-for password in relevantRockYouPasswords[:10]:
+for password in relevantRockYouPasswords[-10:]:
     testPassword = password
     testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)    
 
@@ -204,7 +204,7 @@ for row in xTestCopyForThreshold:
 xTestWithOffset = np.array(xTestWithOffset)
 
     
-for password in relevantRockYouPasswords[:10]:
+for password in relevantRockYouPasswords[-10:]:
     testPassword = password
     testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTestWithOffset, yTest)    
 
