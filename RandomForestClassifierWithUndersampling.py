@@ -1,5 +1,4 @@
 import numpy as np
-import itertools
 import random
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -7,8 +6,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, recall_score, accuracy_score
 from imblearn.under_sampling import NearMiss
 from sklearn.preprocessing import StandardScaler
-import pickle
-import joblib
 import RockYouDatasetParser 
 import SystemPath
 
@@ -19,151 +16,147 @@ def _getDigraphFrequencies(dataframe):
     """Returns the digraph frequencies within a dataframe."""
     return dataframe.groupby("digraph").count()
 
-def _perfectTestSplit(dataframe, test_size=0.2):
+""" OBSOLETE """
+def _perfectTestSplit(dataframe, testSize=0.2):
     """Returns a train dataframe and a perfectly split test dataframe."""
-    unique_digraph_set = set(dataframe['digraph']) 
-    test_split = 0.2
-    min_occurences_perfect_split = int(len(dataframe)*test_split//len(unique_digraph_set))
-    train_dataframe = pd.DataFrame()
-    test_dataframe = pd.DataFrame()
+    uniqueDigraphSet = set(dataframe['digraph']) 
+    testSplit = 0.2
+    minOccurencesForPerfectSplit = int(len(dataframe)*testSplit//len(uniqueDigraphSet))
+    trainDataframe = pd.DataFrame()
+    testDataframe = pd.DataFrame()
     
-    for digraph in unique_digraph_set: 
+    for digraph in uniqueDigraphSet: 
         temp_dataframe = dataframe[dataframe['digraph']==digraph]
         temp_dataframe = temp_dataframe.sample(frac=1).reset_index(drop=True)
-        temp_test_dataframe = temp_dataframe.iloc[:min_occurences_perfect_split,:]
-        temp_train_dataframe = temp_dataframe.iloc[min_occurences_perfect_split:,:]
-        train_dataframe = pd.concat([train_dataframe, temp_train_dataframe], ignore_index=True, sort=False)
-        test_dataframe = pd.concat([test_dataframe, temp_test_dataframe], ignore_index=True, sort=False)
+        temp_testDataframe = temp_dataframe.iloc[:minOccurencesForPerfectSplit,:]
+        temp_trainDataframe = temp_dataframe.iloc[minOccurencesForPerfectSplit:,:]
+        trainDataframe = pd.concat([trainDataframe, temp_trainDataframe], ignore_index=True, sort=False)
+        testDataframe = pd.concat([testDataframe, temp_testDataframe], ignore_index=True, sort=False)
         
-    return train_dataframe, test_dataframe
+    return trainDataframe, testDataframe
 
-def _getBinCount(np_array):
-    classes, indices = np.unique(np_array, return_inverse=True)
+def _getBinCount(numpyArray):
+    classes, indices = np.unique(numpyArray, return_inverse=True)
     class_counts = np.bincount(indices)
     return class_counts
 
-def _trainTestSplit(final_dataframe, test_size=0.2):
-    """Returns X_train, X_test, y_train, y_test. The test data returned is perfectly balanced."""
+def _trainTestSplit(finalDataframe, testSize=0.2):
+    """Returns xTrain, xTest, yTrain, yTest. The test data returned is perfectly balanced."""
     
-    unique_digraph_set = set(final_dataframe['digraph']) 
-    X_train, X_test , y_train , y_test = train_test_split(X, y, test_size=test_size, random_state = 0)
-    min_instance_count = np.min(_getBinCount(y_test))
+    uniqueDigraphSet = set(finalDataframe['digraph']) 
+    xTrain, xTest , yTrain , yTest = train_test_split(X, y, test_size=testSize, random_state = 0)
+    min_instance_count = np.min(_getBinCount(yTest))
     print("The minimum number of instances required for a perfectly balanced test data: ",min_instance_count)
     
-    y_test_balanced = []
-    y_test_discard = []
-    X_test_balanced = []
-    X_test_discard = []
+    yTestBalanced = []
+    yTestDiscard = []
+    xTestBalanced = []
+    xTestDiscard = []
     indices_to_discard = []   
-    for digraph in unique_digraph_set: 
-        indices = (np.where(y_test==digraph))[0]
+    for digraph in uniqueDigraphSet: 
+        indices = (np.where(yTest==digraph))[0]
         indices_to_keep = indices[:np.min(min_instance_count)]
         indices_to_discard = indices[np.min(min_instance_count):]
-        y_test_balanced.extend(np.array(y_test)[indices_to_keep])
-        y_test_discard.extend(np.array(y_test)[indices_to_discard])
-        X_test_balanced.extend(np.array(X_test)[indices_to_keep])
-        X_test_discard.extend(np.array(X_test)[indices_to_discard])
+        yTestBalanced.extend(np.array(yTest)[indices_to_keep])
+        yTestDiscard.extend(np.array(yTest)[indices_to_discard])
+        xTestBalanced.extend(np.array(xTest)[indices_to_keep])
+        xTestDiscard.extend(np.array(xTest)[indices_to_discard])
     
-    X_test_discard= np.array(X_test_discard)
-    X_test_balanced = np.array(X_test_balanced)
-    y_test_balanced = np.array(y_test_balanced)
-    y_test_discard = np.array(y_test_discard)
+    xTestDiscard= np.array(xTestDiscard)
+    xTestBalanced = np.array(xTestBalanced)
+    yTestBalanced = np.array(yTestBalanced)
+    yTestDiscard = np.array(yTestDiscard)
     
-    X_train_updated = np.concatenate((X_train, X_test_discard))
-    y_train_updated = np.concatenate((y_train, y_test_discard))
+    xTrainUpdated = np.concatenate((xTrain, xTestDiscard))
+    yTrainUpdated = np.concatenate((yTrain, yTestDiscard))
     
-    print("The instances per digraph in testing data: ", _getBinCount(y_test_balanced))
-    print("The instances per digraph in training data: ", _getBinCount(y_train_updated))
+    print("The instances per digraph in testing data: ", _getBinCount(yTestBalanced))
+    print("The instances per digraph in training data: ", _getBinCount(yTrainUpdated))
     
-    return X_train_updated, X_test_balanced, y_train_updated, y_test_balanced
+    return xTrainUpdated, xTestBalanced, yTrainUpdated, yTestBalanced
 
     
 # Importing datasets
-msu_dataset=pd.read_csv(path.getDataFilePath("msuupdated.csv"))
-stony_dataset = pd.read_csv(path.getDataFilePath("stonybrooksdataset_updated.csv"))
-greycweb_dataset = pd.read_csv(path.getDataFilePath("greycwebdata.csv"))
-greyc_normal_dataset = pd.read_csv(path.getDataFilePath("greyc_normal.csv"))
+msuDataset=pd.read_csv(path.getDataFilePath("msuupdated.csv"))
+stonyDataset = pd.read_csv(path.getDataFilePath("stonybrooksdataset_updated.csv"))
+greycWebDataset = pd.read_csv(path.getDataFilePath("greycwebdata.csv"))
+greycDataset = pd.read_csv(path.getDataFilePath("greyc_normal.csv"))
 rockYouDataframe = pd.read_csv(path.getDataFilePath("rockyou8subset.csv"))
 relevantDigraphDataframe = pd.read_csv(path.getDataFilePath("uniqueDigraphs.csv"))
 originalRockYouDataframeWithCount = pd.read_csv(path.getDataFilePath("rockyoudataset.csv"))
 
 # Splitting the datasets for undersampling 
-dataframe=pd.concat([ msu_dataset ,greycweb_dataset, greyc_normal_dataset])
+dataframe=pd.concat([ msuDataset ,greycWebDataset, greycDataset])
 dataframe=dataframe.groupby("digraph").filter(lambda x: len(x) > 100)
-dataframe_with_less_than_1000_samples = dataframe.groupby("digraph").filter(lambda x: len(x) < 1000) 
-dataframe_to_undersample = dataframe.groupby("digraph").filter(lambda x: len(x) >= 1000)
+dataframeWithLessThan1000Samples = dataframe.groupby("digraph").filter(lambda x: len(x) < 1000) 
+dataframeToUnderSample = dataframe.groupby("digraph").filter(lambda x: len(x) >= 1000)
 
 # Under Sampling 
-X=dataframe_to_undersample.iloc[:,2:].values
-y=dataframe_to_undersample.iloc[:,1].values
+X=dataframeToUnderSample.iloc[:,2:].values
+y=dataframeToUnderSample.iloc[:,1].values
 undersample = NearMiss()
-X_under, y_under = undersample.fit_resample(X, y)
+xUnder, yUnder = undersample.fit_resample(X, y)
 # To delete the extra index column 
-del dataframe_with_less_than_1000_samples['Unnamed: 0'] 
-undersampled_dataframe = pd.DataFrame(X_under, columns= ['inter-key','uut', 'ddt'])
-undersampled_dataframe.insert(0, "digraph", y_under)
+del dataframeWithLessThan1000Samples['Unnamed: 0'] 
+undersampledDataframe = pd.DataFrame(xUnder, columns= ['inter-key','uut', 'ddt'])
+undersampledDataframe.insert(0, "digraph", yUnder)
 
 # Preprocessing 
-final_dataframe = pd.concat([undersampled_dataframe, dataframe_with_less_than_1000_samples])
-X=final_dataframe.iloc[:,1:].values
-y=final_dataframe.iloc[:,0].values
-_getDigraphFrequencies(final_dataframe)
+finalDataframe = pd.concat([undersampledDataframe, dataframeWithLessThan1000Samples])
+X=finalDataframe.iloc[:,1:].values
+y=finalDataframe.iloc[:,0].values
+_getDigraphFrequencies(finalDataframe)
 
 # Scaling features
-X_train, X_test, y_train, y_test = _trainTestSplit(final_dataframe, 0.75)
+xTrain, xTest, yTrain, yTest = _trainTestSplit(finalDataframe, 0.30)
 scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
+xTrain = scaler.fit_transform(xTrain)
+xTestCopyForThreshold = xTest [:]
+xTest = scaler.transform(xTest)
 
 #Classification
 classifier = RandomForestClassifier(random_state = 23)
-classifier.fit(X_train, y_train)
+classifier.fit(xTrain, yTrain)
 
 ### Preprocessing for classification
 
 relevantRockYouPasswords = parser.extractAllRelevantPasswords(rockYouDataframe, relevantDigraphDataframe)
-unique_digraph_set = set(final_dataframe['digraph']) 
+uniqueDigraphSet = set(finalDataframe['digraph']) 
 
 def _valueAtIndices(value, array):
-    return [index for index, val in enumerate(y_test) if val==value]
+    return [index for index, val in enumerate(yTest) if val==value]
 
-def _getFeaturesAndLabelsForPassword(password, X_test, y_test):
+def _getFeaturesAndLabelsForPassword(password, xTest, yTest):
     digraphArray = parser.getDigraphs(password)
     testFeaturesForPassword = []
     testLabels = []
     for digraph in digraphArray: 
-        occurencesOfDigraph = _valueAtIndices(digraph, y_test)
+        occurencesOfDigraph = _valueAtIndices(digraph, yTest)
         randomTestIndex = random.randint(occurencesOfDigraph[0], occurencesOfDigraph[-1])
-        testFeaturesForPassword.append(X_test[randomTestIndex])
-        testLabels.append(y_test[randomTestIndex])
+        testFeaturesForPassword.append(xTest[randomTestIndex])
+        testLabels.append(yTest[randomTestIndex])
     testFeaturesForPassword = np.array(testFeaturesForPassword)
     testLabels = np.array(testLabels)
     
     return testFeaturesForPassword, testLabels
 
-def _getFeaturesAndLabelsOffseted(password, X_test, y_test, offset = 0.2):
+def _getFeaturesAndLabelsOffseted(password, xTest, yTest, offset = 0.2):
     digraphArray = parser.getDigraphs(password)
     testFeaturesForPassword = []
     testLabels = []
     for digraph in digraphArray: 
-        occurencesOfDigraph = _valueAtIndices(digraph, y_test)
+        occurencesOfDigraph = _valueAtIndices(digraph, yTest)
         randomTestIndex = random.randint(occurencesOfDigraph[0], occurencesOfDigraph[-1])
-        testFeaturesForPassword.append(X_test[randomTestIndex])
-        testLabels.append(y_test[randomTestIndex])
+        testFeaturesForPassword.append(xTest[randomTestIndex])
+        testLabels.append(yTest[randomTestIndex])
     testFeaturesForPassword = np.array(testFeaturesForPassword)
     testLabels = np.array(testLabels)
 
-def _get_top_probabilities(classifier, pred_prob_arr):
-    return dict(sorted(dict(zip(classifier.classes_,pred_prob_arr)).items(), key=lambda x:x[1], reverse=True))
+def _getTopProbabilities(classifier, predictionProbabilityArray):
+    return dict(sorted(dict(zip(classifier.classes_,predictionProbabilityArray)).items(), key=lambda x:x[1], reverse=True))
     
-def get_top_digraphs(classifier,pred_prob_arr, no_of_digraphs=10):
-    return list(_get_top_probabilities(classifier,pred_prob_arr).keys())[:no_of_digraphs]
-
-def generate_words(arr_of_digraphs):
-    pred_word = []
-    for digraph_tuple in itertools.product(*arr_of_digraphs):
-         pred_word.append(''.join(digraph_tuple))
-    return pred_word
+def get_top_digraphs(classifier,predictionProbabilityArray, numberOfDigraphsToPredict=10):
+    return list(_getTopProbabilities(classifier,predictionProbabilityArray).keys())[:numberOfDigraphsToPredict]
 
 def calculatePenaltyScore(digraphProbabilites, testLabels):
     penaltyScore = 0
@@ -182,40 +175,44 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
 penaltyScores = {}
 for password in relevantRockYouPasswords[:10]:
     testPassword = password
-    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, X_test, y_test)    
+    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)    
 
     predictedProbabilites = classifier.predict_proba(testFeatures)
-    digraph_prob=[]
+    digraphProbabilities=[]
     for row in predictedProbabilites:
-        digraph_prob.append(get_top_digraphs(classifier,row, 307))
+        digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
     
-    penaltyScores[testPassword] = calculatePenaltyScore(digraph_prob, testLabels)
+    penaltyScores[testPassword] = calculatePenaltyScore(digraphProbabilities, testLabels)
     index = originalRockYouDataframeWithCount.index[originalRockYouDataframeWithCount['password']== testPassword].tolist()[0]
     occurences = originalRockYouDataframeWithCount.iloc[index]['count']
     
-    print(f"{testPassword} — Penalty:{calculatePenaltyScore(digraph_prob, testLabels)}", end=' ')
+    print(f"{testPassword} — Penalty:{calculatePenaltyScore(digraphProbabilities, testLabels)}", end=' ')
     print("Guess:",index, " Occurences:",occurences )
-
-
-## Adding Threshold
-
-#penaltyScoresWithOffset = {}
-#for password in relevantRockYouPasswords:
-#    testPassword = password
-#    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, X_test, y_test)    
-#
-#    predictedProbabilites = classifier.predict_proba(testFeatures)
-#    digraph_prob=[]
-#    for row in predictedProbabilites:
-#        digraph_prob.append(get_top_digraphs(classifier,row, 307))
-#    
-#    penaltyScores[testPassword] = calculatePenaltyScore(digraph_prob, testLabels)
     
-#    print(f"{testPassword}: {calculatePenaltyScore(digraph_prob, testLabels)}")
+    
 
 
 
-#y_pred = classifier.predict(X_test)
-#print ("Accuracy Score : {}%".format(accuracy_score(y_test, y_pred)*100))
+# Adding Threshold
+
+penaltyScoresWithOffset = {}
+offsetValue = 200
+for password in relevantRockYouPasswords:
+    testPassword = password
+    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)    
+
+    predictedProbabilites = classifier.predict_proba(testFeatures)
+    digraphProbabilities=[]
+    for row in predictedProbabilites:
+        digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
+    
+    penaltyScores[testPassword] = calculatePenaltyScore(digraphProbabilities, testLabels)
+    
+    print(f"{testPassword}: {calculatePenaltyScore(digraphProbabilities, testLabels)}")
+
+
+
+#y_pred = classifier.predict(xTest)
+#print ("Accuracy Score : {}%".format(accuracy_score(yTest, y_pred)*100))
 #
 
