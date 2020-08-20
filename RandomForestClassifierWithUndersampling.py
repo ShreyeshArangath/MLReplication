@@ -191,15 +191,23 @@ for password in relevantRockYouPasswords[:10]:
     
     
 
-
-
 # Adding Threshold
-
+print("\n\n Theshold EXPERIMENT \n\n")
 penaltyScoresWithOffset = {}
 offsetValue = 200
-for password in relevantRockYouPasswords:
+xTestWithOffset = []
+for row in xTestCopyForThreshold:
+    row = np.array(row)
+    offsetedRow = row + offsetValue
+    xTestWithOffset.append(offsetedRow)
+
+xTestWithOffset = np.array(xTestWithOffset)
+
+    
+for password in relevantRockYouPasswords[:10]:
     testPassword = password
-    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)    
+    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTestWithOffset, yTest)    
+
 
     predictedProbabilites = classifier.predict_proba(testFeatures)
     digraphProbabilities=[]
@@ -207,8 +215,11 @@ for password in relevantRockYouPasswords:
         digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
     
     penaltyScores[testPassword] = calculatePenaltyScore(digraphProbabilities, testLabels)
+    index = originalRockYouDataframeWithCount.index[originalRockYouDataframeWithCount['password']== testPassword].tolist()[0]
+    occurences = originalRockYouDataframeWithCount.iloc[index]['count']
     
-    print(f"{testPassword}: {calculatePenaltyScore(digraphProbabilities, testLabels)}")
+    print(f"{testPassword} — Penalty:{calculatePenaltyScore(digraphProbabilities, testLabels)}", end=' ')
+    print("Guess:",index, " Occurences:",occurences )
 
 
 
