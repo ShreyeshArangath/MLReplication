@@ -1,5 +1,9 @@
 # MLReplication
 
+## Set up
+
+Download the RockYouDataset from [here](https://drive.google.com/file/d/1SOSNYS2db09XrU7bX-VJsv8est1qD2Fu/view?usp=sharing) and move the file to ./Data/
+
 ## Results
 
 MSU, GREYC Web, GREYC 
