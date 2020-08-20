@@ -173,7 +173,8 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
     return penaltyScore
 
 penaltyScores = {}
-for password in relevantRockYouPasswords[-10:]:
+loopIndex = 0
+for password in relevantRockYouPasswords[:10]:
     testPassword = password
     testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)    
 
@@ -185,8 +186,9 @@ for password in relevantRockYouPasswords[-10:]:
     penaltyScores[testPassword] = calculatePenaltyScore(digraphProbabilities, testLabels)
     index = originalRockYouDataframeWithCount.index[originalRockYouDataframeWithCount['password']== testPassword].tolist()[0]
     occurences = originalRockYouDataframeWithCount.iloc[index]['count']
+    loopIndex+=1
     
-    print(f"{testPassword} — Penalty:{calculatePenaltyScore(digraphProbabilities, testLabels)}", end=' ')
+    print(f"{loopIndex}. {testPassword} — Penalty:{calculatePenaltyScore(digraphProbabilities, testLabels)}", end=' ')
     print("Guess:",index, " Occurences:",occurences )
     
     
@@ -204,10 +206,10 @@ for row in xTestCopyForThreshold:
 xTestWithOffset = np.array(xTestWithOffset)
 
     
-for password in relevantRockYouPasswords[-10:]:
+loopIndex = 0
+for password in relevantRockYouPasswords[:10]:
     testPassword = password
     testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTestWithOffset, yTest)    
-
 
     predictedProbabilites = classifier.predict_proba(testFeatures)
     digraphProbabilities=[]
@@ -217,9 +219,11 @@ for password in relevantRockYouPasswords[-10:]:
     penaltyScores[testPassword] = calculatePenaltyScore(digraphProbabilities, testLabels)
     index = originalRockYouDataframeWithCount.index[originalRockYouDataframeWithCount['password']== testPassword].tolist()[0]
     occurences = originalRockYouDataframeWithCount.iloc[index]['count']
+    loopIndex+=1
     
-    print(f"{testPassword} — Penalty:{calculatePenaltyScore(digraphProbabilities, testLabels)}", end=' ')
+    print(f"{loopIndex}. {testPassword} — Penalty:{calculatePenaltyScore(digraphProbabilities, testLabels)}", end=' ')
     print("Guess:",index, " Occurences:",occurences )
+    
 
 
 

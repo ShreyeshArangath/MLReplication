@@ -17,57 +17,56 @@ GREYC Web, GREYC
 
 ### Top 10 Passwords
 
-password — Penalty:295 Guess: 3  Occurences: 59462
-princess — Penalty:686 Guess: 5  Occurences: 33291
-michelle — Penalty:356 Guess: 23  Occurences: 12714
-sunshine — Penalty:476 Guess: 25  Occurences: 11489
-samantha — Penalty:956 Guess: 64  Occurences: 7717
-danielle — Penalty:197 Guess: 77  Occurences: 7148
-jonathan — Penalty:297 Guess: 80  Occurences: 6775
-princesa — Penalty:517 Guess: 99  Occurences: 6027
-estrella — Penalty:310 Guess: 103  Occurences: 5850
-carolina — Penalty:532 Guess: 128  Occurences: 5126
+1. password — Penalty:594 Guess: 3  Occurences: 59462
+2. princess — Penalty:334 Guess: 5  Occurences: 33291
+3. michelle — Penalty:527 Guess: 23  Occurences: 12714
+4. sunshine — Penalty:940 Guess: 25  Occurences: 11489
+5. samantha — Penalty:631 Guess: 64  Occurences: 7717
+6. danielle — Penalty:423 Guess: 77  Occurences: 7148
+7. jonathan — Penalty:623 Guess: 80  Occurences: 6775
+8. princesa — Penalty:691 Guess: 99  Occurences: 6027
+9. estrella — Penalty:445 Guess: 103  Occurences: 5850
+10. carolina — Penalty:401 Guess: 128  Occurences: 5126
 
 
  Theshold EXPERIMENT 
 
 
-password — Penalty:1512 Guess: 3  Occurences: 59462
-princess — Penalty:1023 Guess: 5  Occurences: 33291
-michelle — Penalty:900 Guess: 23  Occurences: 12714
-sunshine — Penalty:1425 Guess: 25  Occurences: 11489
-samantha — Penalty:1074 Guess: 64  Occurences: 7717
-danielle — Penalty:839 Guess: 77  Occurences: 7148
-jonathan — Penalty:1005 Guess: 80  Occurences: 6775
-princesa — Penalty:1031 Guess: 99  Occurences: 6027
-estrella — Penalty:1266 Guess: 103  Occurences: 5850
-carolina — Penalty:1022 Guess: 128  Occurences: 5126
-
+1. password — Penalty:1240 Guess: 3  Occurences: 59462
+2. princess — Penalty:1042 Guess: 5  Occurences: 33291
+3. michelle — Penalty:900 Guess: 23  Occurences: 12714
+4. sunshine — Penalty:1427 Guess: 25  Occurences: 11489
+5. samantha — Penalty:1074 Guess: 64  Occurences: 7717
+6. danielle — Penalty:839 Guess: 77  Occurences: 7148
+7. jonathan — Penalty:1005 Guess: 80  Occurences: 6775
+8. princesa — Penalty:809 Guess: 99  Occurences: 6027
+9. estrella — Penalty:1273 Guess: 103  Occurences: 5850
+10. carolina — Penalty:1022 Guess: 128  Occurences: 5126
 
 ### Bottom 10 Passwords
 
-0melting — Penalty:914 Guess: 13482300  Occurences: 1
-0melette — Penalty:389 Guess: 13482305  Occurences: 1
-0melanie — Penalty:227 Guess: 13482306  Occurences: 1
-0megaman — Penalty:322 Guess: 13482310  Occurences: 1
-0masadao — Penalty:368 Guess: 13482344  Occurences: 1
-0marcito — Penalty:123 Guess: 13482366  Occurences: 1
-0mandrin — Penalty:95 Guess: 13482385  Occurences: 1
-0madness — Penalty:543 Guess: 13482414  Occurences: 1
-0madison — Penalty:845 Guess: 13482415  Occurences: 1
-0machine — Penalty:549 Guess: 13482417  Occurences: 1
+1. 0melting — Penalty:327 Guess: 13482300  Occurences: 1
+2. 0melette — Penalty:219 Guess: 13482305  Occurences: 1
+3. 0melanie — Penalty:251 Guess: 13482306  Occurences: 1
+4. 0megaman — Penalty:327 Guess: 13482310  Occurences: 1
+5. 0masadao — Penalty:335 Guess: 13482344  Occurences: 1
+6. 0marcito — Penalty:340 Guess: 13482366  Occurences: 1
+7. 0mandrin — Penalty:61 Guess: 13482385  Occurences: 1
+8. 0madness — Penalty:211 Guess: 13482414  Occurences: 1
+9. 0madison — Penalty:437 Guess: 13482415  Occurences: 1
+10. 0machine — Penalty:281 Guess: 13482417  Occurences: 1
 
 
  Theshold EXPERIMENT 
 
 
-0melting — Penalty:1015 Guess: 13482300  Occurences: 1
-0melette — Penalty:1062 Guess: 13482305  Occurences: 1
-0melanie — Penalty:780 Guess: 13482306  Occurences: 1
-0megaman — Penalty:632 Guess: 13482310  Occurences: 1
-0masadao — Penalty:637 Guess: 13482344  Occurences: 1
-0marcito — Penalty:807 Guess: 13482366  Occurences: 1
-0mandrin — Penalty:855 Guess: 13482385  Occurences: 1
-0madness — Penalty:750 Guess: 13482414  Occurences: 1
-0madison — Penalty:763 Guess: 13482415  Occurences: 1
-0machine — Penalty:609 Guess: 13482417  Occurences: 1
+1. 0melting — Penalty:1015 Guess: 13482300  Occurences: 1
+2. 0melette — Penalty:1066 Guess: 13482305  Occurences: 1
+3. 0melanie — Penalty:788 Guess: 13482306  Occurences: 1
+4. 0megaman — Penalty:632 Guess: 13482310  Occurences: 1
+5. 0masadao — Penalty:637 Guess: 13482344  Occurences: 1
+6. 0marcito — Penalty:945 Guess: 13482366  Occurences: 1
+7. 0mandrin — Penalty:845 Guess: 13482385  Occurences: 1
+8. 0madness — Penalty:750 Guess: 13482414  Occurences: 1
+9. 0madison — Penalty:763 Guess: 13482415  Occurences: 1
+10. 0machine — Penalty:737 Guess: 13482417  Occurences: 1
