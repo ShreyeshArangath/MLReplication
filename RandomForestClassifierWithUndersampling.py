@@ -124,9 +124,11 @@ relevantRockYouPasswords = parser.extractAllRelevantPasswords(rockYouDataframe, 
 uniqueDigraphSet = set(finalDataframe['digraph']) 
 
 def _valueAtIndices(value, array):
-    return [index for index, val in enumerate(yTest) if val==value]
+    """ Returns a list of indices based on a given list of indices """
+    return [index for index, val in enumerate(array) if val==value]
 
 def _getFeaturesAndLabelsForPassword(password, xTest, yTest):
+    """ Returns the test features and test labels for a given password """
     digraphArray = parser.getDigraphs(password)
     testFeaturesForPassword = []
     testLabels = []
@@ -141,6 +143,7 @@ def _getFeaturesAndLabelsForPassword(password, xTest, yTest):
     return testFeaturesForPassword, testLabels
 
 def _getFeaturesAndLabelsOffseted(password, xTest, yTest, offset = 0.2):
+    """ Returns the offseted test features and test labels for a given password """
     digraphArray = parser.getDigraphs(password)
     testFeaturesForPassword = []
     testLabels = []
@@ -159,6 +162,7 @@ def get_top_digraphs(classifier,predictionProbabilityArray, numberOfDigraphsToPr
     return list(_getTopProbabilities(classifier,predictionProbabilityArray).keys())[:numberOfDigraphsToPredict]
 
 def calculatePenaltyScore(digraphProbabilites, testLabels):
+    """ Calculate the penalty score for a password given a list of digraph probabilities """
     penaltyScore = 0
     diCount = 0
     for i in range(len(digraphProbabilites)): 
