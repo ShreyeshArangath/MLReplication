@@ -6,6 +6,8 @@ Download the RockYouDataset from [here](https://drive.google.com/file/d/1SOSNYS2
 
 ## Results
 
+Isolating the feature set to just a single dimensional entity (inter-key) brings down the overall prediction ability of the classifier. The accuracy score drops from ~16.5% to ~5.06%. 
+
 MSU, GREYC Web, GREYC 
 1. Accuracy Score: 15.68%. 
 2. Number of unique digraphs: 307 
@@ -13,8 +15,6 @@ MSU, GREYC Web, GREYC
 GREYC Web, GREYC 
 1. Accuracy Score: 19.80%
 2. Number of unique digraphs: 255 
-
-
 
 ## Initial experiment results: 
 

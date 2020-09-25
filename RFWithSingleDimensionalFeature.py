@@ -1,3 +1,5 @@
+
+
 import numpy as np
 import random
 import pandas as pd
@@ -103,7 +105,7 @@ undersampledDataframe.insert(0, "digraph", yUnder)
 
 # Preprocessing 
 finalDataframe = pd.concat([undersampledDataframe, dataframeWithLessThan1000Samples])
-X=finalDataframe.iloc[:,1:].values
+X=finalDataframe.iloc[:,1:2].values
 y=finalDataframe.iloc[:,0].values
 _getDigraphFrequencies(finalDataframe)
 
@@ -120,7 +122,6 @@ classifier.fit(xTrain, yTrain)
 
 #yPred = classifier.predict(xTest)
 #print ("Accuracy Score : {}%".format(accuracy_score(yTest, yPred)*100))
-
 
 ### Preprocessing for classification
 
