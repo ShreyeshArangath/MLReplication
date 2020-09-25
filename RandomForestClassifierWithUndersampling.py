@@ -200,16 +200,15 @@ for password in relevantRockYouPasswords[:10]:
     print("Guess:",index, " Occurences:",occurences )
     
     
-
 # Adding Threshold
 print("\n\n Theshold EXPERIMENT \n\n")
 penaltyScoresWithOffset = {}
-offsetValue = 200
+thresholdValue = 50
 xTestWithOffset = []
 for row in xTestCopyForThreshold:
     row = np.array(row)
-    offsetedRow = row + offsetValue
-    xTestWithOffset.append(offsetedRow)
+    row[row<thresholdValue] = thresholdValue
+    xTestWithOffset.append(row)
 
 xTestWithOffset = np.array(xTestWithOffset)
 

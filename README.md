@@ -18,6 +18,7 @@ GREYC Web, GREYC
 
 ## Initial experiment results: 
 
+thresholdValue = 200
 
 ### Top 10 Passwords
 
@@ -32,20 +33,19 @@ GREYC Web, GREYC
 9. estrella — Penalty:445 Guess: 103  Occurences: 5850
 10. carolina — Penalty:401 Guess: 128  Occurences: 5126
 
-
  Theshold EXPERIMENT 
 
+1. password — Penalty:1513 Guess: 3  Occurences: 59462
+2. princess — Penalty:1026 Guess: 5  Occurences: 33291
+3. michelle — Penalty:907 Guess: 23  Occurences: 12714
+4. sunshine — Penalty:1425 Guess: 25  Occurences: 11489
+5. samantha — Penalty:1079 Guess: 64  Occurences: 7717
+6. danielle — Penalty:846 Guess: 77  Occurences: 7148
+7. jonathan — Penalty:1010 Guess: 80  Occurences: 6775
+8. princesa — Penalty:1017 Guess: 99  Occurences: 6027
+9. estrella — Penalty:1270 Guess: 103  Occurences: 5850
+10. carolina — Penalty:1027 Guess: 128  Occurences: 5126
 
-1. password — Penalty:1240 Guess: 3  Occurences: 59462
-2. princess — Penalty:1042 Guess: 5  Occurences: 33291
-3. michelle — Penalty:900 Guess: 23  Occurences: 12714
-4. sunshine — Penalty:1427 Guess: 25  Occurences: 11489
-5. samantha — Penalty:1074 Guess: 64  Occurences: 7717
-6. danielle — Penalty:839 Guess: 77  Occurences: 7148
-7. jonathan — Penalty:1005 Guess: 80  Occurences: 6775
-8. princesa — Penalty:809 Guess: 99  Occurences: 6027
-9. estrella — Penalty:1273 Guess: 103  Occurences: 5850
-10. carolina — Penalty:1022 Guess: 128  Occurences: 5126
 
 ### Bottom 10 Passwords
 
