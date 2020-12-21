@@ -8,6 +8,7 @@ from imblearn.under_sampling import NearMiss
 from sklearn.preprocessing import StandardScaler
 import RockYouDatasetParser 
 import SystemPath
+import collections
 
 path = SystemPath.Path()
 parser = RockYouDatasetParser.RockYouDatasetParser()
@@ -181,6 +182,9 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
         print("Error.")
     return penaltyScore
 
+
+### TEST: Top 10 Frequent Passwords
+
 penaltyScores = {}
 loopIndex = 0
 for password in relevantRockYouPasswords[:10]:
@@ -233,7 +237,84 @@ for password in relevantRockYouPasswords[:10]:
     print("Guess:",index, " Occurences:",occurences )
     
 
-# y_pred = classifier.predict(xTest)
-# print ("Accuracy Score : {}%".format(accuracy_score(yTest, y_pred)*100))
+### TEST: Lamondre
+    
+testPassword = "lamondre"
+bestGuesses = []
+for i in range(3):  
+    print(i)
+    penaltyScores = {}
+
+    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)  
+    predictedProbabilites = classifier.predict_proba(testFeatures)
+    digraphProbabilities=[]
+    for row in predictedProbabilites:
+        digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
+        
+    for password in relevantRockYouPasswords:
+        curPasswordDigraph = []
+        for i in range(1,len(password)):
+            curPasswordDigraph.append(password[i-1:i+1])    
+        penaltyScores[password] = calculatePenaltyScore(digraphProbabilities, curPasswordDigraph)
+    
+    intermediatePenaltyScoreDict = sorted(penaltyScores.items(), key=lambda kv: kv[1])
+    sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
+
+    bestGuesses.append(list(sortedPenaltyScores.keys()).index(testPassword))
+
+relevantRockYouPasswords.index('lamondre')
+
+
+print("\n\n Threshold EXPERIMENT \n\n")
+
+# Adding threshold
+thresholdValue = 300
+xTestWithOffset = []
+
+# Create the new xTest 
+for row in xTestCopyForThreshold:
+    if row[0] < thresholdValue:
+        interKey, uut, ddt = row
+        alpha = ddt - interKey
+        beta = uut - interKey
+        newInterKey = thresholdValue
+        newDDT = alpha + newInterKey
+        newUUT = beta + newInterKey
+        row = [thresholdValue, newUUT, newDDT]
+
+    xTestWithOffset.append(row)
+
+xTestWithOffset = np.array(xTestWithOffset)
+
+bestGuessesWithOffset = []
+for i in range(1):  
+    print(i)
+    penaltyScoresWithOffset = {}
+    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTestWithOffset, yTest)  
+    predictedProbabilites = classifier.predict_proba(testFeatures)
+    digraphProbabilities=[]
+    for row in predictedProbabilites:
+        digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
+        
+    for password in relevantRockYouPasswords:
+        curPasswordDigraph = []
+        for i in range(1,len(password)):
+            curPasswordDigraph.append(password[i-1:i+1])    
+        penaltyScoresWithOffset[password] = calculatePenaltyScore(digraphProbabilities, curPasswordDigraph)
+    
+    intermediatePenaltyScoreDict = sorted(penaltyScoresWithOffset.items(), key=lambda kv: kv[1])
+    sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
+    
+    bestGuessesWithOffset.append(list(sortedPenaltyScores.keys()).index(testPassword))
+
+
+relevantRockYouPasswords.index('lamondre')
+
+    
+
+
+#y_pred = classifier.predict(xTest)
+#print ("Accuracy Score : {}%".format(accuracy_score(yTest, y_pred)*100))
+#
 
 
