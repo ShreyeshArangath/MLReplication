@@ -241,8 +241,9 @@ for password in relevantRockYouPasswords[:10]:
     
 testPassword = "lamondre"
 bestGuesses = []
-for i in range(3):  
-    print(i)
+testRuns = 10
+
+for i in range(testRuns):  
     penaltyScores = {}
 
     testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)  
@@ -261,6 +262,7 @@ for i in range(3):
     sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
 
     bestGuesses.append(list(sortedPenaltyScores.keys()).index(testPassword))
+    print(bestGuesses[-1])
 
 relevantRockYouPasswords.index('lamondre')
 
@@ -268,27 +270,30 @@ relevantRockYouPasswords.index('lamondre')
 print("\n\n Threshold EXPERIMENT \n\n")
 
 # Adding threshold
-thresholdValue = 300
+thresholdValue = 100
 xTestWithOffset = []
 
 # Create the new xTest 
 for row in xTestCopyForThreshold:
+    newRow = row
     if row[0] < thresholdValue:
         interKey, uut, ddt = row
+        
         alpha = ddt - interKey
         beta = uut - interKey
+        
         newInterKey = thresholdValue
         newDDT = alpha + newInterKey
         newUUT = beta + newInterKey
-        row = [thresholdValue, newUUT, newDDT]
+        
+        newRow = [thresholdValue, newUUT, newDDT]
 
-    xTestWithOffset.append(row)
+    xTestWithOffset.append(newRow)
 
 xTestWithOffset = np.array(xTestWithOffset)
 
 bestGuessesWithOffset = []
-for i in range(1):  
-    print(i)
+for i in range(testRuns):  
     penaltyScoresWithOffset = {}
     testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTestWithOffset, yTest)  
     predictedProbabilites = classifier.predict_proba(testFeatures)
@@ -306,6 +311,7 @@ for i in range(1):
     sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
     
     bestGuessesWithOffset.append(list(sortedPenaltyScores.keys()).index(testPassword))
+    print(bestGuessesWithOffset[-1])
 
 
 relevantRockYouPasswords.index('lamondre')
