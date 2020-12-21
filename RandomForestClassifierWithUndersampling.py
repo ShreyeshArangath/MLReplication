@@ -160,7 +160,8 @@ def _getFeaturesAndLabelsOffseted(password, xTest, yTest, offset = 0.2):
     testLabels = np.array(testLabels)
 
 def _getTopProbabilities(classifier, predictionProbabilityArray):
-    return dict(sorted(dict(zip(classifier.classes_,predictionProbabilityArray)).items(), key=lambda x:x[1], reverse=True))
+    return dict(sorted(dict(zip(classifier.classes_,predictionProbabilityArray)).items(), 
+                       key=lambda x:x[1], reverse=True))
     
 def get_top_digraphs(classifier,predictionProbabilityArray, numberOfDigraphsToPredict=10):
     return list(_getTopProbabilities(classifier,predictionProbabilityArray).keys())[:numberOfDigraphsToPredict]
@@ -232,9 +233,7 @@ for password in relevantRockYouPasswords[:10]:
     print("Guess:",index, " Occurences:",occurences )
     
 
+# y_pred = classifier.predict(xTest)
+# print ("Accuracy Score : {}%".format(accuracy_score(yTest, y_pred)*100))
 
-
-#y_pred = classifier.predict(xTest)
-#print ("Accuracy Score : {}%".format(accuracy_score(yTest, y_pred)*100))
-#
 
