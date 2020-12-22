@@ -208,7 +208,7 @@ for password in relevantRockYouPasswords[:10]:
 # Adding Threshold
 print("\n\n Theshold EXPERIMENT \n\n")
 penaltyScoresWithOffset = {}
-thresholdValue = 50
+thresholdValue = 200
 xTestWithOffset = []
 for row in xTestCopyForThreshold:
     row = np.array(row)
@@ -270,7 +270,7 @@ relevantRockYouPasswords.index('lamondre')
 print("\n\n Threshold EXPERIMENT \n\n")
 
 # Adding threshold
-thresholdValue = 100
+thresholdValue = 200
 xTestWithOffset = []
 
 # Create the new xTest 
@@ -317,6 +317,58 @@ for i in range(testRuns):
 relevantRockYouPasswords.index('lamondre')
 
     
+
+
+## TEST: 
+  # Adding threshold
+for _ in range(100):
+    thresholdValue = _
+    print(f"Threshold: {thresholdValue}")
+    xTestWithOffset = []
+    
+    # Create the new xTest 
+    for row in xTestCopyForThreshold:
+        newRow = row
+        if row[0] < thresholdValue:
+            interKey, uut, ddt = row
+            
+            alpha = ddt - interKey
+            beta = uut - interKey
+            
+            newInterKey = thresholdValue
+            newDDT = alpha + newInterKey
+            newUUT = beta + newInterKey
+            
+            newRow = [thresholdValue, newUUT, newDDT]
+    
+        xTestWithOffset.append(newRow)
+    
+    xTestWithOffset = np.array(xTestWithOffset)
+    
+    bestGuessesWithOffset = []
+    for i in range(testRuns):  
+        penaltyScoresWithOffset = {}
+        testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTestWithOffset, yTest)  
+        predictedProbabilites = classifier.predict_proba(testFeatures)
+        digraphProbabilities=[]
+        for row in predictedProbabilites:
+            digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
+            
+        for password in relevantRockYouPasswords:
+            curPasswordDigraph = []
+            for i in range(1,len(password)):
+                curPasswordDigraph.append(password[i-1:i+1])    
+            penaltyScoresWithOffset[password] = calculatePenaltyScore(digraphProbabilities, curPasswordDigraph)
+        
+        intermediatePenaltyScoreDict = sorted(penaltyScoresWithOffset.items(), key=lambda kv: kv[1])
+        sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
+        
+        bestGuessesWithOffset.append(list(sortedPenaltyScores.keys()).index(testPassword))
+    print(bestGuessesWithOffset)
+    
+
+relevantRockYouPasswords.index('lamondre')
+
 
 
 #y_pred = classifier.predict(xTest)
