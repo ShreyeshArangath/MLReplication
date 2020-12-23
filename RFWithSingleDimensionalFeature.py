@@ -207,7 +207,8 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
 def rankPenalties(processData):
     testRuns, xTest, yTest, testPassword = processData
     bestGuesses = []
-    for i in range(testRuns):  
+    for i in range(testRuns): 
+        print(i)
         penaltyScores = {}
     
         testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)  
@@ -242,6 +243,7 @@ def multiprocessingExperiment(thresholdValue):
           xTestWithOffset.append(newRow)
           
       xTestWithOffset = np.array(xTestWithOffset)
+      print(thresholdValue)
       poolData = ([50, xTest, yTest, testPassword], [50, xTestWithOffset, yTest, testPassword])
       
       with Pool(2) as processPool:
@@ -250,27 +252,27 @@ def multiprocessingExperiment(thresholdValue):
       
       # bestGuesses = (rankPenalties(50, xTest, yTest))
       # bestGuessesWithOffset = (rankPenalties(50 xTestWithOffset, yTest))
-
+      
+      res.insert(0, thresholdValue)
       
       return res
         
 
 thresholdValues = [150, 175, 200, 225, 250, 275, 300]
 
+data = []
 for thresholdValue in thresholdValues:
     res = multiprocessingExperiment(thresholdValue)
+    data.append(res)
 
-
-count = 10 
-bestGuesses = {}
-bestGuessesWithOffset = {}
+    
 
 """
 bestGuesses, bestGuessesWithout, threshold
 """
 
 experiment = []
-for row in res:
+for row in data:
     threshold, bestGuesses, bestGuessesWithOffset = row 
     length = len(bestGuesses)
     data = [[bestGuesses[i], bestGuessesWithOffset[i], threshold] for i in range(length)]
