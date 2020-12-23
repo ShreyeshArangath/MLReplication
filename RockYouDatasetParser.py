@@ -8,7 +8,7 @@ Created on Thu Aug 13 23:55:17 2020
 """
 
 import pandas as pd
-from path import Path
+from SystemPath import Path
 
 class RockYouDatasetParser:
 
