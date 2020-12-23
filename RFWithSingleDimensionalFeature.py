@@ -1,5 +1,4 @@
-
-
+import collections
 import numpy as np
 import random
 import pandas as pd
@@ -10,6 +9,8 @@ from imblearn.under_sampling import NearMiss
 from sklearn.preprocessing import StandardScaler
 import RockYouDatasetParser 
 import SystemPath
+from multiprocess import Pool
+import json 
 
 path = SystemPath.Path()
 parser = RockYouDatasetParser.RockYouDatasetParser()
@@ -105,23 +106,23 @@ undersampledDataframe.insert(0, "digraph", yUnder)
 
 # Preprocessing 
 finalDataframe = pd.concat([undersampledDataframe, dataframeWithLessThan1000Samples])
-X=finalDataframe.iloc[:,1:2].values
+X=finalDataframe.iloc[:,3:4].values
 y=finalDataframe.iloc[:,0].values
 _getDigraphFrequencies(finalDataframe)
 
 # Scaling features
 xTrain, xTest, yTrain, yTest = _trainTestSplit(finalDataframe, 0.30)
-scaler = StandardScaler()
-xTrain = scaler.fit_transform(xTrain)
+# scaler = StandardScaler()
+# xTrain = scaler.fit_transform(xTrain)
 xTestCopyForThreshold = xTest [:]
-xTest = scaler.transform(xTest)
+# xTest = scaler.transform(xTest)
 
 #Classification
 classifier = RandomForestClassifier(random_state = 23)
 classifier.fit(xTrain, yTrain)
 
-#yPred = classifier.predict(xTest)
-#print ("Accuracy Score : {}%".format(accuracy_score(yTest, yPred)*100))
+yPred = classifier.predict(xTest)
+print ("Accuracy Score : {}%".format(accuracy_score(yTest, yPred)*100))
 
 ### Preprocessing for classification
 
@@ -181,62 +182,174 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
         print("Error.")
     return penaltyScore
 
-penaltyScores = {}
-loopIndex = 0
-for password in relevantRockYouPasswords[:10]:
-    testPassword = password
-    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)    
 
-    predictedProbabilites = classifier.predict_proba(testFeatures)
-    digraphProbabilities=[]
-    for row in predictedProbabilites:
-        digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
+def rankPenalties(testRuns, xTest, yTest, testPassword = "lamondre"):
+    bestGuesses = []
+    for i in range(testRuns):  
+        penaltyScores = {}
     
-    penaltyScores[testPassword] = calculatePenaltyScore(digraphProbabilities, testLabels)
-    index = originalRockYouDataframeWithCount.index[originalRockYouDataframeWithCount['password']== testPassword].tolist()[0]
-    occurences = originalRockYouDataframeWithCount.iloc[index]['count']
-    loopIndex+=1
+        testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)  
+        predictedProbabilites = classifier.predict_proba(testFeatures)
+        digraphProbabilities=[]
+        for row in predictedProbabilites:
+            digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
+            
+        for password in relevantRockYouPasswords:
+            curPasswordDigraph = []
+            for i in range(1,len(password)):
+                curPasswordDigraph.append(password[i-1:i+1])    
+            penaltyScores[password] = calculatePenaltyScore(digraphProbabilities, curPasswordDigraph)
+        
+        intermediatePenaltyScoreDict = sorted(penaltyScores.items(), key=lambda kv: kv[1])
+        sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
     
-    print(f"{loopIndex}. {testPassword} — Penalty:{calculatePenaltyScore(digraphProbabilities, testLabels)}", end=' ')
-    print("Guess:",index, " Occurences:",occurences )
+        bestGuesses.append(list(sortedPenaltyScores.keys()).index(testPassword))
     
+    return bestGuesses
     
+   
 
-# Adding Threshold
-print("\n\n Theshold EXPERIMENT \n\n")
-penaltyScoresWithOffset = {}
-offsetValue = 200
+
+thresholdValue = 200
+print("Threshold: ", thresholdValue )
+
 xTestWithOffset = []
+# Update the xTest rows based on the threshold
 for row in xTestCopyForThreshold:
-    row = np.array(row)
-    offsetedRow = row + offsetValue
-    xTestWithOffset.append(offsetedRow)
-
+    newRow = row
+    if abs(row[0]) < thresholdValue:
+        newRow = [thresholdValue]
+    xTestWithOffset.append(newRow)
+    
 xTestWithOffset = np.array(xTestWithOffset)
 
-    
-loopIndex = 0
-for password in relevantRockYouPasswords[:10]:
-    testPassword = password
-    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTestWithOffset, yTest)    
 
-    predictedProbabilites = classifier.predict_proba(testFeatures)
-    digraphProbabilities=[]
-    for row in predictedProbabilites:
-        digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
-    
-    penaltyScores[testPassword] = calculatePenaltyScore(digraphProbabilities, testLabels)
-    index = originalRockYouDataframeWithCount.index[originalRockYouDataframeWithCount['password']== testPassword].tolist()[0]
-    occurences = originalRockYouDataframeWithCount.iloc[index]['count']
-    loopIndex+=1
-    
-    print(f"{loopIndex}. {testPassword} — Penalty:{calculatePenaltyScore(digraphProbabilities, testLabels)}", end=' ')
-    print("Guess:",index, " Occurences:",occurences )
-    
+bestGuesses = rankPenalties(1, xTest, yTest)
+bestGuessesWithOffset = rankPenalties(1, xTestWithOffset, yTest)
 
 
+# Plots 
+def multiprocessingExperiment(thresholdValue):
+      xTestWithOffset = []
+      
+      # Update the xTest rows based on the threshold
+      for row in xTestCopyForThreshold:
+          newRow = row
+          if abs(row[0]) < thresholdValue:
+              newRow = [thresholdValue]
+          xTestWithOffset.append(newRow)
+          
+      xTestWithOffset = np.array(xTestWithOffset)
+      
+      bestGuesses = (rankPenalties(10, xTest, yTest))
+      bestGuessesWithOffset = (rankPenalties(10, xTestWithOffset, yTest)) 
+      
+      return [thresholdValue, bestGuesses, bestGuessesWithOffset]
+        
 
-#y_pred = classifier.predict(xTest)
-#print ("Accuracy Score : {}%".format(accuracy_score(yTest, y_pred)*100))
-#
+with Pool(len(thresholdValues)) as processPool:
+    thresholdValues = [150, 175, 200, 225, 250, 275, 300]
+    
+    poolData = thresholdValues
+    
+    res = processPool.map(multiprocessingExperiment, poolData)
+
+
+
+
+count = 10 
+bestGuesses = {}
+bestGuessesWithOffset = {}
+for thresholdValue in thresholdValues: 
+    
+   
+print(bestGuesses)
+print(bestGuessesWithOffset)
+
+experimentResults = {}
+
+for row in res: 
+    thresholdValue, withoutThreshold, withThreshold = row 
+    experimentResults[thresholdValue] = {
+        "withThreshold": withThreshold, 
+        "withoutThreshold": withoutThreshold
+    }
+    
+    
+with open('experimentResults.txt', 'w') as out:
+    json.dump(experimentResults, out)
+    
+    
+    
+
+
+# ### TEST: Lamondre
+    
+# testPassword = "lamondre"
+# bestGuesses = []
+# testRuns = 10
+
+# print("Random Guessing: ", relevantRockYouPasswords.index('lamondre'))
+
+# for i in range(testRuns):  
+#     penaltyScores = {}
+
+#     testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)  
+#     predictedProbabilites = classifier.predict_proba(testFeatures)
+#     digraphProbabilities=[]
+#     for row in predictedProbabilites:
+#         digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
+        
+#     for password in relevantRockYouPasswords:
+#         curPasswordDigraph = []
+#         for i in range(1,len(password)):
+#             curPasswordDigraph.append(password[i-1:i+1])    
+#         penaltyScores[password] = calculatePenaltyScore(digraphProbabilities, curPasswordDigraph)
+    
+#     intermediatePenaltyScoreDict = sorted(penaltyScores.items(), key=lambda kv: kv[1])
+#     sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
+
+#     bestGuesses.append(list(sortedPenaltyScores.keys()).index(testPassword))
+#     print(bestGuesses)
+
+# print("\n\n Threshold EXPERIMENT \n\n")
+# thresholdValue = 100
+# print("Threshold: ", thresholdValue )
+
+# xTestWithOffset = []
+
+# # Update the xTest rows based on the threshold
+# for row in xTestCopyForThreshold:
+#     newRow = row
+#     if abs(row[0]) < thresholdValue:
+#         newRow = [thresholdValue]
+#     xTestWithOffset.append(newRow)
+# xTestWithOffset = np.array(xTestWithOffset)
+
+# # Run the test
+#     # Get the prediction from the classifier
+#     # Rank each of the passwords with its corresponding penalty
+# bestGuessesWithOffset = []
+# for i in range(testRuns):  
+#     penaltyScoresWithOffset = {}
+#     testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTestWithOffset, yTest)  
+#     predictedProbabilites = classifier.predict_proba(testFeatures)
+#     digraphProbabilities=[]
+#     for row in predictedProbabilites:
+#         digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
+        
+#     for password in relevantRockYouPasswords:
+#         curPasswordDigraph = []
+#         for i in range(1,len(password)):
+#             curPasswordDigraph.append(password[i-1:i+1])    
+#         penaltyScoresWithOffset[password] = calculatePenaltyScore(digraphProbabilities, curPasswordDigraph)
+    
+#     intermediatePenaltyScoreDict = sorted(penaltyScoresWithOffset.items(), key=lambda kv: kv[1])
+#     sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
+    
+#     bestGuessesWithOffset.append(list(sortedPenaltyScores.keys()).index(testPassword))
+#     print(bestGuessesWithOffset)
+
+# relevantRockYouPasswords.index('lamondre')
+
 

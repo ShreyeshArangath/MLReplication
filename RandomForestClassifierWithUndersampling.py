@@ -208,7 +208,7 @@ for password in relevantRockYouPasswords[:10]:
 # Adding Threshold
 print("\n\n Theshold EXPERIMENT \n\n")
 penaltyScoresWithOffset = {}
-thresholdValue = 200
+thresholdValue = 100
 xTestWithOffset = []
 for row in xTestCopyForThreshold:
     row = np.array(row)
@@ -234,7 +234,7 @@ for password in relevantRockYouPasswords[:10]:
     loopIndex+=1
     
     print(f"{loopIndex}. {testPassword} — Penalty:{calculatePenaltyScore(digraphProbabilities, testLabels)}", end=' ')
-    print("Guess:",index, " Occurences:",occurences )
+    print("Guess:", index, " Occurences:", occurences )
     
 
 ### TEST: Lamondre
@@ -270,13 +270,13 @@ relevantRockYouPasswords.index('lamondre')
 print("\n\n Threshold EXPERIMENT \n\n")
 
 # Adding threshold
-thresholdValue = 200
+thresholdValue = 150
 xTestWithOffset = []
 
 # Create the new xTest 
 for row in xTestCopyForThreshold:
     newRow = row
-    if row[0] < thresholdValue:
+    if abs(row[0]) < thresholdValue:
         interKey, uut, ddt = row
         
         alpha = ddt - interKey
@@ -316,11 +316,8 @@ for i in range(testRuns):
 
 relevantRockYouPasswords.index('lamondre')
 
-    
-
-
-## TEST: 
-  # Adding threshold
+        
+## TEST     
 for _ in range(100):
     thresholdValue = _
     print(f"Threshold: {thresholdValue}")
@@ -329,7 +326,7 @@ for _ in range(100):
     # Create the new xTest 
     for row in xTestCopyForThreshold:
         newRow = row
-        if row[0] < thresholdValue:
+        if abs(row[0]) < thresholdValue:
             interKey, uut, ddt = row
             
             alpha = ddt - interKey

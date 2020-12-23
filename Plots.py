@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd 
 import collections 
 import os 
+import json 
+import seaborn
 
 """
 Components: 
@@ -45,16 +47,16 @@ extractedUserMap = collections.defaultdict(list)
 
 for index, row in dataframe.iterrows():
     digraph, interKey, uut, ddt, userNo = row     
-    extractedUserMap[userNo].append(interKey)
+    extractedUserMap[userNo].append(ddt)
 
 
 #### PLOTS
 
 ## PLOT: Inter Key Time v/s Frequency: {UID}
 for userNo in extractedUserMap:
-    interKey = extractedUserMap[userNo]
-    plt.title("Inter Key Time v/s Frequency: {0}".format(userNo))
-    plt.xlabel("Inter Key")
+    interKey = extractedUserMap[20]
+    plt.title("DDT v/s Frequency: {0}".format(userNo))
+    plt.xlabel("DDT")
     plt.ylabel("Frequency")
     plt.hist(x = interKey, bins = getBins(interKey))
     break
@@ -67,26 +69,48 @@ for userNo in extractedUserMap:
     interKey = extractedUserMap[userNo]
     averageUserData[userNo] = np.mean(interKey)
 
-dataPoints =  averageUserData.values() 
-plt.title("Average Inter Key Time (user-based) v/s Frequency")
-plt.xlabel("Average Inter Key Time")
+
+
+
+dataPoints =  np.array( list(averageUserData.values()) )
+dataPoints = dataPoints[np.where(dataPoints < 1000)]
+plt.title("Average DDT Time (user-based) v/s Frequency")
+plt.xlabel("Average DDT Time")
 plt.ylabel("Frequency")
 plt.hist(x = dataPoints, bins = getBins(dataPoints))
 
 
-# Threshold: 50 
-# No Threshold: [3, 5262, 9424, 20695, 298, 3553, 8421, 178, 77139, 7873]
-# With Threshold: [148730,148730,148730,148730,148730,148730,148730,148730,148730,148730]
 
-# Threshold: 75
-# No Threshold: [209, 5536, 268, 2566, 42727, 210, 6098, 61158, 2759, 196]
-# With Threshold: [148728,148730,148730,148730,148730,148730,148726,148730,148730,148730]
+# SINGLE FEATURE - DDT 
+# Accuracy: 3.37 % 
 
-# Threshold: 100 
-# No Threshold: [2335, 8624, 1118, 189, 16215, 2230, 268, 20022, 0, 14223]
-# With Threshold: [148730,148730,148726,148730,148730,148730,148730,148724,148730,148730]
 
+# Without: [1105, 14681, 15270, 2114, 110, 10592, 8945, 9, 43655, 80511]
+
+# The thresholding suffers when the threshold is 100. I'm trying to see when it actually starts dropping
+
+# Threshold: 100
+# With: [1451, 1126, 6988, 409, 221, 133, 3702, 6767, 91, 1981]
+
+# Threshold: 150
+# With: [36186, 56717, 68347, 100029, 116324, 57706, 67388, 170580, 23029, 38070]
+
+# Threshold: 200 
+# With: [46209, 29631, 3854, 31924, 42443, 37789, 111042, 1450, 100183, 47740]
+
+# Threshold: 250 
+# With: [116986, 132027, 66862, 143520, 105982, 116986, 130783, 87243, 94642, 108524]
+
+# Threshold: 300 
+# With: [158240, 158240, 130356, 220544, 130356, 158240, 82598, 81326, 158240, 156784]
+
+
+with open('./Data/experimentResults.txt', 'r') as inp:
+    data = json.load(inp)
     
+# Plot out change of threshold and avg of 10 best 
+# Plot out change of threshold and 10 worst 
+# Plot avg threshold vs random 
 
 
 
