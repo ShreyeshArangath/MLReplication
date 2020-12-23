@@ -4,7 +4,7 @@ import pandas as pd
 import collections 
 import os 
 import json 
-import seaborn
+import seaborn as sns
 
 """
 Components: 
@@ -74,45 +74,77 @@ for userNo in extractedUserMap:
 
 dataPoints =  np.array( list(averageUserData.values()) )
 dataPoints = dataPoints[np.where(dataPoints < 1000)]
-plt.title("Average DDT Time (user-based) v/s Frequency")
+plt.title("Average DDT Time (user-ba sed) v/s Frequency")
 plt.xlabel("Average DDT Time")
 plt.ylabel("Frequency")
 plt.hist(x = dataPoints, bins = getBins(dataPoints))
 
 
 
-# SINGLE FEATURE - DDT 
-# Accuracy: 3.37 % 
-
-
-# Without: [1105, 14681, 15270, 2114, 110, 10592, 8945, 9, 43655, 80511]
-
-# The thresholding suffers when the threshold is 100. I'm trying to see when it actually starts dropping
-
-# Threshold: 100
-# With: [1451, 1126, 6988, 409, 221, 133, 3702, 6767, 91, 1981]
-
-# Threshold: 150
-# With: [36186, 56717, 68347, 100029, 116324, 57706, 67388, 170580, 23029, 38070]
-
-# Threshold: 200 
-# With: [46209, 29631, 3854, 31924, 42443, 37789, 111042, 1450, 100183, 47740]
-
-# Threshold: 250 
-# With: [116986, 132027, 66862, 143520, 105982, 116986, 130783, 87243, 94642, 108524]
-
-# Threshold: 300 
-# With: [158240, 158240, 130356, 220544, 130356, 158240, 82598, 81326, 158240, 156784]
-
-
-with open('./Data/experimentResults.txt', 'r') as inp:
-    data = json.load(inp)
-    
+data = pd.read_csv('./Data/ExperimentData.csv')
 # Plot out change of threshold and avg of 10 best 
 # Plot out change of threshold and 10 worst 
 # Plot avg threshold vs random 
 
 
+# comparing the avg thresholds at each thresholdValue
+averageThreshold = data.groupby('thresholdValue', as_index = False).agg(averageGuess = ('withThreshold', 'mean'))
+ax = sns.catplot(x = 'thresholdValue', y = 'averageGuess', kind = 'bar', data = averageThreshold)
+ax.set(xlabel = 'Threshold Values', ylabel = 'Number of Guesses', title = 'Average guess: With Threshold ')
+plt.show()
+
+
+# Comparing worst thresholds at each thresholdValue
+worstThreshold = data.groupby('thresholdValue', as_index = False).agg(worstGuess = ('withThreshold', 'max'))
+ax = sns.catplot(x = 'thresholdValue', y = 'worstGuess', kind = 'bar', data = worstThreshold)
+ax.set(xlabel = 'Threshold Values', ylabel = 'Number of Guesses', title = 'Worst guess: With Threshold')
+plt.show()
+
+
+# Comparing avg of both with and without threshold experiments for each threshold value
+avgComparison = data.groupby('thresholdValue', as_index = False).agg(thresholdAvgGuess = ('withThreshold', 'mean'), 
+                                                                     modelAvgGuess = ('withoutThreshold', 'mean'))
+avgComparison = pd.melt(avgComparison, id_vars = 'thresholdValue', var_name = 'variable', value_name = 'value')
+ax = sns.catplot(x = 'thresholdValue', y = 'value', hue ='variable',  kind = 'bar', data = avgComparison)
+ax.set(xlabel = 'Threshold Values', ylabel = 'Number of Guesses', title = 'Average guess: With Threshold v/s Without Threshold')
+plt.show()
+
+
+# Comparing worst of both with and without threshold experiments for each threshold value
+worstComparison = data.groupby('thresholdValue', as_index = False).agg(withThreshold = ('withThreshold', 'max'), 
+                                                                       withoutThreshold = ('withoutThreshold', 'max'))
+worstComparison = pd.melt(worstComparison, id_vars = 'thresholdValue', var_name = 'variable', value_name = 'value')
+ax = sns.catplot(x = 'thresholdValue', y = 'value', hue ='variable',  kind = 'bar', data = worstComparison)
+ax.set(xlabel = 'Threshold Values', ylabel = 'Number of Guesses', title = 'Worst guess: With Threshold v/s Without Threshold')
+plt.show()
+
+
+# Comparing avg of both with and without threshold experiments for each threshold value along with random guess
+avgComparison = data.groupby('thresholdValue', as_index = False).agg(
+    thresholdAvgGuess = ('withThreshold', 'mean'), modelAvgGuess = ('withoutThreshold', 'mean'))
+avgComparison['Random Guess'] = [55110]*len(avgComparison)
+avgComparison = pd.melt(avgComparison, id_vars = 'thresholdValue', var_name = 'variable', value_name = 'value')
+ax = sns.catplot(x = 'thresholdValue', y = 'value', hue ='variable',  kind = 'bar', data = avgComparison)
+ax.set(xlabel = 'Threshold Values', ylabel = 'Number of Guesses', title = 'Average guess: With Threshold v/s Without Threshold  v/s Random Guessing')
+plt.show()
+
+
+# Comparing worst of both with and without threshold experiments for each threshold value along with random guess
+worstComparison = data.groupby('thresholdValue', as_index = False).agg(
+    withThreshold = ('withThreshold', 'max'), withoutThreshold = ('withoutThreshold', 'max'))
+worstComparison['Random Guess'] = [55110]*len(worstComparison)
+worstComparison = pd.melt(worstComparison, id_vars = 'thresholdValue', var_name = 'variable', value_name = 'value')
+ax = sns.catplot(x = 'thresholdValue', y = 'value', hue ='variable',  kind = 'bar', data = worstComparison)
+ax.set(xlabel = 'Threshold Values', ylabel = 'Number of Guesses', title = 'Worst guess: With Threshold v/s Without Threshold v/s Random Guessing')
+plt.show()
+
+
+
+
+# Comparing overall model guessing capabilities 
+ax = sns.boxplot(x = data['withoutThreshold'], palette = 'Set3', width= 0.3)
+ax.set(xlabel = 'Number of Guesses', title = 'Model prediction without threshold')
+plt.show()
 
 
 

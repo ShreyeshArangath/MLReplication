@@ -183,7 +183,29 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
     return penaltyScore
 
 
-def rankPenalties(testRuns, xTest, yTest, testPassword = "lamondre"):
+   
+
+
+# thresholdValue = 200
+# print("Threshold: ", thresholdValue )
+
+# xTestWithOffset = []
+# # Update the xTest rows based on the threshold
+# for row in xTestCopyForThreshold:
+#     newRow = row
+#     if abs(row[0]) < thresholdValue:
+#         newRow = [thresholdValue]
+#     xTestWithOffset.append(newRow)
+    
+# xTestWithOffset = np.array(xTestWithOffset)
+
+
+# bestGuesses = rankPenalties(1, xTest, yTest)
+# bestGuessesWithOffset = rankPenalties(1, xTestWithOffset, yTest)
+
+
+def rankPenalties(processData):
+    testRuns, xTest, yTest, testPassword = processData
     bestGuesses = []
     for i in range(testRuns):  
         penaltyScores = {}
@@ -207,31 +229,11 @@ def rankPenalties(testRuns, xTest, yTest, testPassword = "lamondre"):
     
     return bestGuesses
     
-   
-
-
-thresholdValue = 200
-print("Threshold: ", thresholdValue )
-
-xTestWithOffset = []
-# Update the xTest rows based on the threshold
-for row in xTestCopyForThreshold:
-    newRow = row
-    if abs(row[0]) < thresholdValue:
-        newRow = [thresholdValue]
-    xTestWithOffset.append(newRow)
-    
-xTestWithOffset = np.array(xTestWithOffset)
-
-
-bestGuesses = rankPenalties(1, xTest, yTest)
-bestGuessesWithOffset = rankPenalties(1, xTestWithOffset, yTest)
-
 
 # Plots 
 def multiprocessingExperiment(thresholdValue):
       xTestWithOffset = []
-      
+      testPassword = "lamondre"
       # Update the xTest rows based on the threshold
       for row in xTestCopyForThreshold:
           newRow = row
@@ -240,46 +242,44 @@ def multiprocessingExperiment(thresholdValue):
           xTestWithOffset.append(newRow)
           
       xTestWithOffset = np.array(xTestWithOffset)
+      poolData = ([50, xTest, yTest, testPassword], [50, xTestWithOffset, yTest, testPassword])
       
-      bestGuesses = (rankPenalties(10, xTest, yTest))
-      bestGuessesWithOffset = (rankPenalties(10, xTestWithOffset, yTest)) 
+      with Pool(2) as processPool:
+          res = processPool.map(rankPenalties, poolData)
+         
       
-      return [thresholdValue, bestGuesses, bestGuessesWithOffset]
+      # bestGuesses = (rankPenalties(50, xTest, yTest))
+      # bestGuessesWithOffset = (rankPenalties(50 xTestWithOffset, yTest))
+
+      
+      return res
         
 
-with Pool(len(thresholdValues)) as processPool:
-    thresholdValues = [150, 175, 200, 225, 250, 275, 300]
-    
-    poolData = thresholdValues
-    
-    res = processPool.map(multiprocessingExperiment, poolData)
+thresholdValues = [150, 175, 200, 225, 250, 275, 300]
 
-
+for thresholdValue in thresholdValues:
+    res = multiprocessingExperiment(thresholdValue)
 
 
 count = 10 
 bestGuesses = {}
 bestGuessesWithOffset = {}
-for thresholdValue in thresholdValues: 
-    
-   
-print(bestGuesses)
-print(bestGuessesWithOffset)
 
-experimentResults = {}
+"""
+bestGuesses, bestGuessesWithout, threshold
+"""
 
-for row in res: 
-    thresholdValue, withoutThreshold, withThreshold = row 
-    experimentResults[thresholdValue] = {
-        "withThreshold": withThreshold, 
-        "withoutThreshold": withoutThreshold
-    }
-    
-    
-with open('experimentResults.txt', 'w') as out:
-    json.dump(experimentResults, out)
-    
-    
+experiment = []
+for row in res:
+    threshold, bestGuesses, bestGuessesWithOffset = row 
+    length = len(bestGuesses)
+    data = [[bestGuesses[i], bestGuessesWithOffset[i], threshold] for i in range(length)]
+    experiment.extend(data)
+
+
+experimentDataframe = pd.DataFrame(experiment, columns = ['withoutThreshold','withThreshold', 'thresholdValue'])
+
+experimentDataframe.to_csv('./Data/ExperimentData1.csv')
     
 
 
