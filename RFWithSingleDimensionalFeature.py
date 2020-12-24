@@ -258,7 +258,7 @@ def multiprocessingExperiment(thresholdValue):
       return res
         
 
-thresholdValues = [150, 175, 200, 225, 250, 275, 300]
+thresholdValues = range(100, 150, 10)
 
 data = []
 for thresholdValue in thresholdValues:
@@ -281,7 +281,7 @@ for row in data:
 
 experimentDataframe = pd.DataFrame(experiment, columns = ['withoutThreshold','withThreshold', 'thresholdValue'])
 
-experimentDataframe.to_csv('./Data/ExperimentData1.csv')
+experimentDataframe.to_csv('./Data/ExperimentData100-150.csv')
     
 
 
@@ -317,7 +317,7 @@ experimentDataframe.to_csv('./Data/ExperimentData1.csv')
 # print("\n\n Threshold EXPERIMENT \n\n")
 # thresholdValue = 100
 # print("Threshold: ", thresholdValue )
-
+# testRuns = 2
 # xTestWithOffset = []
 
 # # Update the xTest rows based on the threshold

@@ -81,7 +81,7 @@ plt.hist(x = dataPoints, bins = getBins(dataPoints))
 
 
 
-data = pd.read_csv('./Data/ExperimentData.csv')
+data = pd.read_csv('./Data/ExperimentData1.csv')
 # Plot out change of threshold and avg of 10 best 
 # Plot out change of threshold and 10 worst 
 # Plot avg threshold vs random 
