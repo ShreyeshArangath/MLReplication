@@ -179,7 +179,7 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
                 penaltyScore += (j+1)
                 break
     if diCount!=7:
-        print(f"Error. Digraph count = {diCount}")
+        print("Error. Digraph count = {diCount}")
     return penaltyScore
 
 
