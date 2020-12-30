@@ -258,7 +258,7 @@ def multiprocessingExperiment(thresholdValue):
       return res
         
 
-thresholdValues = range(100, 326, 10)
+thresholdValues = range(100, 350,25)
 
 data = []
 for thresholdValue in thresholdValues:
