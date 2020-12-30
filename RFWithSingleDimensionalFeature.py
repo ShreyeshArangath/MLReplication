@@ -89,7 +89,7 @@ relevantDigraphDataframe = pd.read_csv(path.getDataFilePath("uniqueDigraphs.csv"
 originalRockYouDataframeWithCount = pd.read_csv(path.getDataFilePath("rockyoudataset.csv"))
 
 # Splitting the datasets for undersampling 
-dataframe=pd.concat([ msuDataset ,greycWebDataset, greycDataset])
+dataframe=pd.concat([ msuDataset ,greycWebDataset, greycDataset, stonyDataset])
 dataframe=dataframe.groupby("digraph").filter(lambda x: len(x) > 100)
 dataframeWithLessThan1000Samples = dataframe.groupby("digraph").filter(lambda x: len(x) < 1000) 
 dataframeToUnderSample = dataframe.groupby("digraph").filter(lambda x: len(x) >= 1000)
@@ -176,14 +176,39 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
         for j in range(len(row)):
             if row[j]==testLabels[i]:
                 diCount+=1
-                penaltyScore+= (j+1)
+                penaltyScore += (j+1)
                 break
     if diCount!=7:
-        print("Error.")
+        print(f"Error. Digraph count = {diCount}")
     return penaltyScore
 
 
-   
+ 
+def rankPenalties(processData):
+    testRuns, xTest, yTest, testPassword = processData
+    bestGuesses = []
+    for i in range(testRuns): 
+        print(i)
+        penaltyScores = {}
+        # 307 
+        testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)  
+        predictedProbabilites = classifier.predict_proba(testFeatures)
+        digraphProbabilities=[]
+        for row in predictedProbabilites:
+            digraphProbabilities.append(get_top_digraphs(classifier,row, 556))
+            
+        for password in relevantRockYouPasswords:
+            curPasswordDigraph = []
+            for i in range(1,len(password)):
+                curPasswordDigraph.append(password[i-1:i+1])    
+            penaltyScores[password] = calculatePenaltyScore(digraphProbabilities, curPasswordDigraph)
+        
+        intermediatePenaltyScoreDict = sorted(penaltyScores.items(), key=lambda kv: kv[1])
+        sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
+    
+        bestGuesses.append(list(sortedPenaltyScores.keys()).index(testPassword))
+    
+    return bestGuesses  
 
 
 # thresholdValue = 200
@@ -200,35 +225,10 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
 # xTestWithOffset = np.array(xTestWithOffset)
 
 
-# bestGuesses = rankPenalties(1, xTest, yTest)
-# bestGuessesWithOffset = rankPenalties(1, xTestWithOffset, yTest)
+# bestGuesses = rankPenalties([1, xTest, yTest, "lamondre"])
+# bestGuessesWithOffset = rankPenalties([1, xTestWithOffset, yTest, "lamondre"])
 
 
-def rankPenalties(processData):
-    testRuns, xTest, yTest, testPassword = processData
-    bestGuesses = []
-    for i in range(testRuns): 
-        print(i)
-        penaltyScores = {}
-    
-        testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)  
-        predictedProbabilites = classifier.predict_proba(testFeatures)
-        digraphProbabilities=[]
-        for row in predictedProbabilites:
-            digraphProbabilities.append(get_top_digraphs(classifier,row, 307))
-            
-        for password in relevantRockYouPasswords:
-            curPasswordDigraph = []
-            for i in range(1,len(password)):
-                curPasswordDigraph.append(password[i-1:i+1])    
-            penaltyScores[password] = calculatePenaltyScore(digraphProbabilities, curPasswordDigraph)
-        
-        intermediatePenaltyScoreDict = sorted(penaltyScores.items(), key=lambda kv: kv[1])
-        sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
-    
-        bestGuesses.append(list(sortedPenaltyScores.keys()).index(testPassword))
-    
-    return bestGuesses
     
 
 # Plots 
@@ -258,7 +258,7 @@ def multiprocessingExperiment(thresholdValue):
       return res
         
 
-thresholdValues = range(100, 150, 10)
+thresholdValues = range(100, 326, 10)
 
 data = []
 for thresholdValue in thresholdValues:
@@ -281,7 +281,7 @@ for row in data:
 
 experimentDataframe = pd.DataFrame(experiment, columns = ['withoutThreshold','withThreshold', 'thresholdValue'])
 
-experimentDataframe.to_csv('./Data/ExperimentData100-150.csv')
+experimentDataframe.to_csv('./Data/ExperimentData100-325.csv')
     
 
 
