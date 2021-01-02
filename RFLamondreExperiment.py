@@ -235,7 +235,6 @@ def multiprocessingExperiment(thresholdValue):
       
       return res
 
-
 # Test 
 
 def rankPenaltiesRandomPasswords(poolData):
@@ -297,43 +296,39 @@ def randomPasswordsExperiment(thresholdValue, testPasswords):
 
 
 thresholdValues = range(100, 350, 25)
-n = 199
-testPasswords = ["lamondre"] + random.sample(relevantRockYouPasswords, n)
+# n = 199
+# testPasswords = ["lamondre"] + random.sample(relevantRockYouPasswords, n)
 
-# [testPassword, With/Without, randomGuess], bestGuess]
+# # [testPassword, With/Without, randomGuess], bestGuess]
+# data = []
+# for threshold in thresholdValues: 
+#     data.append(randomPasswordsExperiment(threshold, testPasswords))
+
+# experiment = []
+# for dataRow in data: 
+#     threshold = dataRow[0]
+#     for row in dataRow[1:]:    
+#         row.append(threshold)
+#         experiment.append(row)
+        
+# expData = pd.DataFrame(experiment, columns = ["Password", "Type", "Random Guess", "Guess", "Threshold"])
+# expData.to_csv('./Data/ExperimentData200Password.csv')
+
 data = []
-for threshold in thresholdValues: 
-    data.append(randomPasswordsExperiment(threshold, testPasswords))
+for thresholdValue in thresholdValues:
+    res = multiprocessingExperiment(thresholdValue)
+    data.append(res)
 
 experiment = []
-for dataRow in data: 
-    threshold = dataRow[0]
-    for row in dataRow[1:]:    
-        row.append(threshold)
-        experiment.append(row)
-        
-expData = pd.DataFrame(experiment, columns = ["Password", "Type", "Random Guess", "Guess", "Threshold"])
-expData.to_csv('./Data/ExperimentData200Password.csv')
-
-    
+for row in data:
+    threshold, bestGuesses, bestGuessesWithOffset = row 
+    length = len(bestGuesses)
+    data = [[bestGuesses[i], bestGuessesWithOffset[i], threshold] for i in range(length)]
+    experiment.extend(data)
 
 
-# data = []
-# for thresholdValue in thresholdValues:
-#     res = multiprocessingExperiment(thresholdValue)
-#     data.append(res)
+experimentDataframe = pd.DataFrame(experiment, columns = ['withoutThreshold','withThreshold', 'thresholdValue'])
 
-    
-# experiment = []
-# for row in data:
-#     threshold, bestGuesses, bestGuessesWithOffset = row 
-#     length = len(bestGuesses)
-#     data = [[bestGuesses[i], bestGuessesWithOffset[i], threshold] for i in range(length)]
-#     experiment.extend(data)
-
-
-# experimentDataframe = pd.DataFrame(experiment, columns = ['withoutThreshold','withThreshold', 'thresholdValue'])
-
-# experimentDataframe.to_csv('./Data/ExperimentData100-325.csv')
+experimentDataframe.to_csv('./Data/ExperimentData100-325-Stony.csv')
     
 # relevantRockYouPasswords.index('lamondre')

@@ -14,4 +14,4 @@
 #$ -P quanah
 . $HOME/conda/etc/profile.d/conda.sh
 conda activate
-python3 RFWithSingleDimensionalFeature.py
+python3 RFLamondreExperiment.py
