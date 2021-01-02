@@ -149,6 +149,9 @@ plt.show()
 
 
 
+password200 = pd.read_csv("./Data/ExperimentData200Password.csv")
+password200.rename(columns = {'Guess': 'RandomGuess', 'Random Guess': 'Guess'}, inplace = True) 
+password200.to_csv("./Data/ExperimentData200Password(1).csv")
 
 
 

@@ -304,7 +304,6 @@ testPasswords = ["lamondre"] + random.sample(relevantRockYouPasswords, n)
 data = []
 for threshold in thresholdValues: 
     data.append(randomPasswordsExperiment(threshold, testPasswords))
-    break
 
 experiment = []
 for dataRow in data: 
