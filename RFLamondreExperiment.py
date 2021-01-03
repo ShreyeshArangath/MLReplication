@@ -295,23 +295,6 @@ def randomPasswordsExperiment(thresholdValue, testPasswords):
     return res 
 
 thresholdValues = range(100, 350, 25)
-# n = 199
-# testPasswords = ["lamondre"] + random.sample(relevantRockYouPasswords, n)
-
-# # [testPassword, With/Without, randomGuess], bestGuess]
-# data = []
-# for threshold in thresholdValues: 
-#     data.append(randomPasswordsExperiment(threshold, testPasswords))
-
-# experiment = []
-# for dataRow in data: 
-#     threshold = dataRow[0]
-#     for row in dataRow[1:]:    
-#         row.append(threshold)
-#         experiment.append(row)
-        
-# expData = pd.DataFrame(experiment, columns = ["Password", "Type", "Random Guess", "Guess", "Threshold"])
-# expData.to_csv('./Data/ExperimentData200Password.csv')
 
 data = []
 for thresholdValue in thresholdValues:
