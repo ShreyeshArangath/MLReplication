@@ -90,6 +90,7 @@ originalRockYouDataframeWithCount = pd.read_csv(path.getDataFilePath("rockyoudat
 
 # Splitting the datasets for undersampling 
 dataframe=pd.concat([ msuDataset ,greycWebDataset, greycDataset])
+print(len(set(dataframe["digraph"])))
 dataframe=dataframe.groupby("digraph").filter(lambda x: len(x) > 100)
 dataframeWithLessThan1000Samples = dataframe.groupby("digraph").filter(lambda x: len(x) < 1000) 
 dataframeToUnderSample = dataframe.groupby("digraph").filter(lambda x: len(x) >= 1000)
@@ -108,7 +109,10 @@ undersampledDataframe.insert(0, "digraph", yUnder)
 finalDataframe = pd.concat([undersampledDataframe, dataframeWithLessThan1000Samples])
 X=finalDataframe.iloc[:,3:4].values
 y=finalDataframe.iloc[:,0].values
-_getDigraphFrequencies(finalDataframe)
+print(_getDigraphFrequencies(finalDataframe))
+
+print(finalDataframe)
+print(len(set(finalDataframe["digraph"])))
 
 # Scaling features
 xTrain, xTest, yTrain, yTest = _trainTestSplit(finalDataframe, 0.30)
@@ -128,6 +132,8 @@ print ("Accuracy Score : {}%".format(accuracy_score(yTest, yPred)*100))
 
 relevantRockYouPasswords = parser.extractAllRelevantPasswords(rockYouDataframe, relevantDigraphDataframe)
 uniqueDigraphSet = set(finalDataframe['digraph']) 
+print(len(relevantRockYouPasswords))
+exit()
 
 def _valueAtIndices(value, array):
     """ Returns a list of indices based on a given list of indices """
