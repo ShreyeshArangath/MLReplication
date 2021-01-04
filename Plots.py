@@ -87,6 +87,8 @@ data = pd.read_csv('./Data/ExperimentData100-325-Stony.csv')
 # Plot avg threshold vs random 
 
 
+randomGuess = 124220
+
 # comparing the avg thresholds at each thresholdValue
 averageThreshold = data.groupby('thresholdValue', as_index = False).agg(averageGuess = ('withThreshold', 'mean'))
 ax = sns.catplot(x = 'thresholdValue', y = 'averageGuess', kind = 'bar', data = averageThreshold)
@@ -122,7 +124,7 @@ plt.show()
 # Comparing avg of both with and without threshold experiments for each threshold value along with random guess
 avgComparison = data.groupby('thresholdValue', as_index = False).agg(
     thresholdAvgGuess = ('withThreshold', 'mean'), modelAvgGuess = ('withoutThreshold', 'mean'))
-avgComparison['Random Guess'] = [55110]*len(avgComparison)
+avgComparison['Random Guess'] = [randomGuess]*len(avgComparison)
 avgComparison = pd.melt(avgComparison, id_vars = 'thresholdValue', var_name = 'variable', value_name = 'value')
 ax = sns.catplot(x = 'thresholdValue', y = 'value', hue ='variable',  kind = 'bar', data = avgComparison)
 ax.set(xlabel = 'Threshold Values', ylabel = 'Number of Guesses', title = 'Average guess: With Threshold v/s Without Threshold  v/s Random Guessing')
@@ -132,7 +134,7 @@ plt.show()
 # Comparing worst of both with and without threshold experiments for each threshold value along with random guess
 worstComparison = data.groupby('thresholdValue', as_index = False).agg(
     withThreshold = ('withThreshold', 'max'), withoutThreshold = ('withoutThreshold', 'max'))
-worstComparison['Random Guess'] = [55110]*len(worstComparison)
+worstComparison['Random Guess'] = [randomGuess]*len(worstComparison)
 worstComparison = pd.melt(worstComparison, id_vars = 'thresholdValue', var_name = 'variable', value_name = 'value')
 ax = sns.catplot(x = 'thresholdValue', y = 'value', hue ='variable',  kind = 'bar', data = worstComparison)
 ax.set(xlabel = 'Threshold Values', ylabel = 'Number of Guesses', title = 'Worst guess: With Threshold v/s Without Threshold v/s Random Guessing')
