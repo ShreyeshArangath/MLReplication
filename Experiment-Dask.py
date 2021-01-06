@@ -90,6 +90,8 @@ rockYouDataframe = pd.read_csv(path.getDataFilePath("rockyou8subset.csv"))
 # relevantDigraphDataframe = pd.read_csv(path.getDataFilePath("uniqueDigraphs.csv"))
 originalRockYouDataframeWithCount = pd.read_csv(path.getDataFilePath("rockyoudataset.csv"))
 
+# Preprocessing
+
 # Splitting the datasets for undersampling 
 dataframe=pd.concat([ msuDataset ,greycWebDataset, greycDataset, stonyDataset])
 dataframe=dataframe.groupby("digraph").filter(lambda x: len(x) > 100)
@@ -114,23 +116,19 @@ _getDigraphFrequencies(finalDataframe)
 
 # Scaling features
 xTrain, xTest, yTrain, yTest = _trainTestSplit(finalDataframe, 0.30)
-# scaler = StandardScaler()
-# xTrain = scaler.fit_transform(xTrain)
 xTestCopyForThreshold = xTest [:]
-# xTest = scaler.transform(xTest)
 
-#Classification
 classifier = RandomForestClassifier(random_state = 23)
 classifier.fit(xTrain, yTrain)
 
 yPred = classifier.predict(xTest)
 print ("Accuracy Score : {}%".format(accuracy_score(yTest, yPred)*100))
 
-### Preprocessing for classification
-
+### Preprocessing for experiments
 relevantDigraphDataframe = pd.DataFrame(finalDataframe['digraph'])
 relevantRockYouPasswords = parser.extractAllRelevantPasswords(rockYouDataframe, relevantDigraphDataframe)
 uniqueDigraphSet = set(finalDataframe['digraph']) 
+
 
 def _valueAtIndices(value, array):
     """ Returns a list of indices based on a given list of indices """
@@ -183,139 +181,101 @@ def calculatePenaltyScore(digraphProbabilites, testLabels):
                 break
     if diCount!=7:
         print("Error. Digraph count = {diCount}")
-    return penaltyScore
+    return penaltyScore 
 
 
-# Rank Penalties 
-def rankPenalties(processData):
-    testRuns, xTest, yTest, testPassword = processData
-    bestGuesses = []
-    print(testPassword)
-    for i in range(testRuns): 
-        print(i)
-        penaltyScores = {}
-        # 307 
-        testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)  
-        predictedProbabilites = classifier.predict_proba(testFeatures)
-        digraphProbabilities=[]
-        for row in predictedProbabilites:
-            digraphProbabilities.append(get_top_digraphs(classifier,row, 556))
-            
-        for password in relevantRockYouPasswords:
-            curPasswordDigraph = []
-            for i in range(1,len(password)):
-                curPasswordDigraph.append(password[i-1:i+1])    
-            penaltyScores[password] = calculatePenaltyScore(digraphProbabilities, curPasswordDigraph)
-        
-        intermediatePenaltyScoreDict = sorted(penaltyScores.items(), key=lambda kv: kv[1])
-        sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
-    
-        bestGuesses.append(list(sortedPenaltyScores.keys()).index(testPassword))
-    
-    return bestGuesses  
+import dask
+from dask.distributed import Client
 
-def multiprocessingExperiment(thresholdValue):
-      xTestWithOffset = []
-      testPassword = "lamondre"
-      # Update the xTest rows based on the threshold
-      for row in xTestCopyForThreshold:
-          newRow = row
-          if abs(row[0]) < thresholdValue:
-              newRow = [thresholdValue]
-          xTestWithOffset.append(newRow)
-          
-      xTestWithOffset = np.array(xTestWithOffset)
-      print(thresholdValue)
-      poolData = ([50, xTest, yTest, testPassword], [50, xTestWithOffset, yTest, testPassword])
-      
-      with Pool(2) as processPool:
-          res = processPool.map(rankPenalties, poolData)
-         
-      res.insert(0, thresholdValue)
-      
-      return res
-
-
-# Test 
-
-def rankPenaltiesRandomPasswords(poolData):
-    testRuns, xTest, yTest, testPassword, isThreshold = poolData
-    label = "WithThreshold" if isThreshold else "Without"
-    randomGuess = relevantRockYouPasswords.index(testPassword)
-    
-    
-    res = [testPassword, label, randomGuess]
-    bestGuesses = []
-    print(testPassword)
-    for i in range(testRuns): 
-        print(i)
-        penaltyScores = {}
-        # 307 
-        testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)  
-        predictedProbabilites = classifier.predict_proba(testFeatures)
-        digraphProbabilities=[]
-        for row in predictedProbabilites:
-            digraphProbabilities.append(get_top_digraphs(classifier,row, 556))
-            
-        for password in relevantRockYouPasswords:
-            curPasswordDigraph = []
-            for i in range(1,len(password)):
-                curPasswordDigraph.append(password[i-1:i+1])    
-            penaltyScores[password] = calculatePenaltyScore(digraphProbabilities, curPasswordDigraph)
-        
-        intermediatePenaltyScoreDict = sorted(penaltyScores.items(), key=lambda kv: kv[1])
-        sortedPenaltyScores = collections.OrderedDict(intermediatePenaltyScoreDict)
-    
-        bestGuesses.append(list(sortedPenaltyScores.keys()).index(testPassword))
-    
-    res.append(bestGuesses[0])
-    return res
-    
-def randomPasswordsExperiment(thresholdValue, testPasswords):
+def _getXTestWithThreshold(xTestCopyForThreshold, thresholdValue):
     xTestWithOffset = []
     for row in xTestCopyForThreshold:
-          newRow = row
-          if abs(row[0]) < thresholdValue:
+        newRow = row
+        if abs(row[0]) < thresholdValue:
               newRow = [thresholdValue]
-          xTestWithOffset.append(newRow)
+        xTestWithOffset.append(newRow)
           
     xTestWithOffset = np.array(xTestWithOffset)
-    
-    # poolData = [testRuns, xTest, yTest, testPassword], [testRuns, xTestWithOffset, yTest, testPassword]
-    poolData = []
-    testRuns = 1
-    for password in testPasswords:
-        poolData.append([testRuns, xTest, yTest, password, False])
-        poolData.append([testRuns, xTestWithOffset, yTest, password, True])
-        
-    
-    with Pool(2) as processPool:
-        res = processPool.map(rankPenaltiesRandomPasswords, poolData)
-    
-    del poolData 
-    
-    res.insert(0, thresholdValue)
-    return res 
+    return xTestWithOffset 
 
 
+# Executes one test run
+def _getPenaltyScore(password, digraphProbabilities):
+    curPasswordDigraph = []
+    for i in range(1,len(password)):
+        curPasswordDigraph.append(password[i-1:i+1])   
+    return calculatePenaltyScore(digraphProbabilities, curPasswordDigraph)
+
+def _getDigraphProbabilties(xTest, yTest, testPassword):
+    # Get random features 
+    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)  
+    predictedProbabilites = classifier.predict_proba(testFeatures)
+    # Predict 
+    digraphProbabilities=[]
+    for row in predictedProbabilites:
+        digraphProbabilities.append(get_top_digraphs(classifier,row, 556))
+    
+    return digraphProbabilities
+    
+
+def _testRun(poolData):
+    # Data 
+    xTest, yTest, testPassword, isThreshold = poolData
+    label = "WithThreshold" if isThreshold else "Without"
+    randomGuess = relevantRockYouPasswords.index(testPassword)
+    res = [testPassword, label, randomGuess]
+    bestGuesses = []
+
+    # Get the required features and probabilites
+    testFeatures, testLabels = _getFeaturesAndLabelsForPassword(testPassword, xTest, yTest)  
+    predictedProbabilites = classifier.predict_proba(testFeatures)
+    
+    digraphProbabilities=[]
+    for row in predictedProbabilites:
+        digraphProbabilities.append(get_top_digraphs(classifier,row, 556))
+
+    # Generate penalty scores for each 
+    penaltyScores = {}
+    for index, password in enumerate(relevantRockYouPasswords):
+        print(index)
+        penaltyScores[password] = _getPenaltyScore(password, digraphProbabilities)
+
+    return penaltyScores
+
+
+
+client = Client()
+client.cluster.scale(10) 
+
+xTestWithThreshold = {}
 thresholdValues = range(100, 350, 25)
-n = 10
-# testPasswords = ["lamondre"] + random.sample(relevantRockYouPasswords, n)
-testPasswords = random.sample(relevantRockYouPasswords, n)
-
-# [testPassword, With/Without, randomGuess], bestGuess]
-data = []
 
 for threshold in thresholdValues: 
-    data.append(randomPasswordsExperiment(threshold, testPasswords))
+    xTestWithThreshold[threshold] = dask.delayed(_getXTestWithThreshold)(xTestCopyForThreshold, 100) 
 
-experiment = []
+xTestWithThreshold = dask.compute(xTestWithThreshold)
+xTestWithThreshold = xTestWithThreshold[0]
 
-for dataRow in data: 
-    threshold = dataRow[0]
-    for row in dataRow[1:]:    
-        row.append(threshold)
-        experiment.append(row)
-        
-expData = pd.DataFrame(experiment, columns = ["Password", "Type", "Random Guess", "Guess", "Threshold"])
-expData.to_csv('./Data/ExperimentData200Password.csv')
+# Generate test passwords 
+n = 3
+testPasswords = random.sample(relevantRockYouPasswords, n)
+
+from itertools import product 
+params = list(product(testPasswords, thresholdValues))
+
+testRun = dask.delayed(_testRun)
+futures = []
+for param in params: 
+    password, threshold = param
+    poolData = [xTestWithThreshold[threshold], yTest, password, True]
+    future = testRun(poolData)
+    futures.append(future)
+  
+futures = dask.compute(futures) 
+
+
+    
+
+
+
+

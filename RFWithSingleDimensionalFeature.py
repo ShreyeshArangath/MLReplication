@@ -126,7 +126,7 @@ classifier.fit(xTrain, yTrain)
 yPred = classifier.predict(xTest)
 print ("Accuracy Score : {}%".format(accuracy_score(yTest, yPred)*100))
 
-### Preprocessing for classification
+### Preprocessing for experiments
 
 relevantDigraphDataframe = pd.DataFrame(finalDataframe['digraph'])
 relevantRockYouPasswords = parser.extractAllRelevantPasswords(rockYouDataframe, relevantDigraphDataframe)
