@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,unclekim,WithThreshold,100,194038,15170
+1,unclekim,Without,100,194038,54754
+2,unclekim,WithThreshold,125,194038,222421
+3,unclekim,Without,125,194038,306799
+4,unclekim,WithThreshold,150,194038,167471
+5,unclekim,Without,150,194038,350517
+6,unclekim,WithThreshold,175,194038,442576
+7,unclekim,Without,175,194038,134312
+8,unclekim,WithThreshold,200,194038,21114
+9,unclekim,Without,200,194038,209177
+10,unclekim,WithThreshold,225,194038,57582
+11,unclekim,Without,225,194038,235655
+12,unclekim,WithThreshold,250,194038,411556
+13,unclekim,Without,250,194038,246852
+14,unclekim,WithThreshold,275,194038,351046
+15,unclekim,Without,275,194038,194448
+16,unclekim,WithThreshold,300,194038,391245
+17,unclekim,Without,300,194038,348368
+18,unclekim,WithThreshold,325,194038,19574
+19,unclekim,Without,325,194038,383589

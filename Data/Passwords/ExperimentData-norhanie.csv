@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,norhanie,WithThreshold,100,67658,20956
+1,norhanie,Without,100,67658,150269
+2,norhanie,WithThreshold,125,67658,96151
+3,norhanie,Without,125,67658,248824
+4,norhanie,WithThreshold,150,67658,36917
+5,norhanie,Without,150,67658,183843
+6,norhanie,WithThreshold,175,67658,268840
+7,norhanie,Without,175,67658,186
+8,norhanie,WithThreshold,200,67658,314924
+9,norhanie,Without,200,67658,498630
+10,norhanie,WithThreshold,225,67658,99284
+11,norhanie,Without,225,67658,217642
+12,norhanie,WithThreshold,250,67658,68156
+13,norhanie,Without,250,67658,692
+14,norhanie,WithThreshold,275,67658,131026
+15,norhanie,Without,275,67658,170389
+16,norhanie,WithThreshold,300,67658,99140
+17,norhanie,Without,300,67658,584574
+18,norhanie,WithThreshold,325,67658,30339
+19,norhanie,Without,325,67658,156013

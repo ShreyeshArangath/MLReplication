@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,angelbay,WithThreshold,100,641973,114273
+1,angelbay,Without,100,641973,4299
+2,angelbay,WithThreshold,125,641973,165176
+3,angelbay,Without,125,641973,203751
+4,angelbay,WithThreshold,150,641973,200292
+5,angelbay,Without,150,641973,1312
+6,angelbay,WithThreshold,175,641973,198002
+7,angelbay,Without,175,641973,117541
+8,angelbay,WithThreshold,200,641973,159423
+9,angelbay,Without,200,641973,101710
+10,angelbay,WithThreshold,225,641973,198159
+11,angelbay,Without,225,641973,204071
+12,angelbay,WithThreshold,250,641973,88307
+13,angelbay,Without,250,641973,4389
+14,angelbay,WithThreshold,275,641973,128036
+15,angelbay,Without,275,641973,356054
+16,angelbay,WithThreshold,300,641973,211569
+17,angelbay,Without,300,641973,121514
+18,angelbay,WithThreshold,325,641973,15769
+19,angelbay,Without,325,641973,31905

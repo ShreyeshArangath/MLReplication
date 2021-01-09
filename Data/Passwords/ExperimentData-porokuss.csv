@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,porokuss,WithThreshold,100,294396,216136
+1,porokuss,Without,100,294396,146910
+2,porokuss,WithThreshold,125,294396,454809
+3,porokuss,Without,125,294396,34120
+4,porokuss,WithThreshold,150,294396,367724
+5,porokuss,Without,150,294396,193840
+6,porokuss,WithThreshold,175,294396,282457
+7,porokuss,Without,175,294396,498287
+8,porokuss,WithThreshold,200,294396,331432
+9,porokuss,Without,200,294396,270538
+10,porokuss,WithThreshold,225,294396,357634
+11,porokuss,Without,225,294396,48144
+12,porokuss,WithThreshold,250,294396,553264
+13,porokuss,Without,250,294396,220997
+14,porokuss,WithThreshold,275,294396,375083
+15,porokuss,Without,275,294396,203990
+16,porokuss,WithThreshold,300,294396,270405
+17,porokuss,Without,300,294396,184673
+18,porokuss,WithThreshold,325,294396,185099
+19,porokuss,Without,325,294396,41777

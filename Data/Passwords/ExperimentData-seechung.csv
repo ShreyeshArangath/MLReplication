@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,seechung,WithThreshold,100,254344,318832
+1,seechung,Without,100,254344,357754
+2,seechung,WithThreshold,125,254344,493634
+3,seechung,Without,125,254344,244018
+4,seechung,WithThreshold,150,254344,524859
+5,seechung,Without,150,254344,170435
+6,seechung,WithThreshold,175,254344,257185
+7,seechung,Without,175,254344,458207
+8,seechung,WithThreshold,200,254344,80963
+9,seechung,Without,200,254344,58462
+10,seechung,WithThreshold,225,254344,140655
+11,seechung,Without,225,254344,168328
+12,seechung,WithThreshold,250,254344,45188
+13,seechung,Without,250,254344,18367
+14,seechung,WithThreshold,275,254344,214673
+15,seechung,Without,275,254344,417380
+16,seechung,WithThreshold,300,254344,391394
+17,seechung,Without,300,254344,99780
+18,seechung,WithThreshold,325,254344,393176
+19,seechung,Without,325,254344,22515

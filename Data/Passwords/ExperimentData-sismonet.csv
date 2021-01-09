@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,sismonet,WithThreshold,100,241670,201425
+1,sismonet,Without,100,241670,149763
+2,sismonet,WithThreshold,125,241670,100744
+3,sismonet,Without,125,241670,64440
+4,sismonet,WithThreshold,150,241670,352779
+5,sismonet,Without,150,241670,25136
+6,sismonet,WithThreshold,175,241670,44309
+7,sismonet,Without,175,241670,78195
+8,sismonet,WithThreshold,200,241670,134684
+9,sismonet,Without,200,241670,148057
+10,sismonet,WithThreshold,225,241670,276429
+11,sismonet,Without,225,241670,125981
+12,sismonet,WithThreshold,250,241670,40156
+13,sismonet,Without,250,241670,485159
+14,sismonet,WithThreshold,275,241670,165399
+15,sismonet,Without,275,241670,479433
+16,sismonet,WithThreshold,300,241670,182768
+17,sismonet,Without,300,241670,209435
+18,sismonet,WithThreshold,325,241670,156848
+19,sismonet,Without,325,241670,294138

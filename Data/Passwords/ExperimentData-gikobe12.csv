@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,gikobe12,WithThreshold,100,502947,592764
+1,gikobe12,Without,100,502947,54911
+2,gikobe12,WithThreshold,125,502947,540813
+3,gikobe12,Without,125,502947,112396
+4,gikobe12,WithThreshold,150,502947,263181
+5,gikobe12,Without,150,502947,136207
+6,gikobe12,WithThreshold,175,502947,513482
+7,gikobe12,Without,175,502947,52170
+8,gikobe12,WithThreshold,200,502947,3484
+9,gikobe12,Without,200,502947,7619
+10,gikobe12,WithThreshold,225,502947,183984
+11,gikobe12,Without,225,502947,138161
+12,gikobe12,WithThreshold,250,502947,213083
+13,gikobe12,Without,250,502947,311543
+14,gikobe12,WithThreshold,275,502947,548197
+15,gikobe12,Without,275,502947,399335
+16,gikobe12,WithThreshold,300,502947,245604
+17,gikobe12,Without,300,502947,24736
+18,gikobe12,WithThreshold,325,502947,2460
+19,gikobe12,Without,325,502947,5

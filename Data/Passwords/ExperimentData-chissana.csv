@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,chissana,WithThreshold,100,581110,32035
+1,chissana,Without,100,581110,3904
+2,chissana,WithThreshold,125,581110,12115
+3,chissana,Without,125,581110,206572
+4,chissana,WithThreshold,150,581110,40235
+5,chissana,Without,150,581110,209474
+6,chissana,WithThreshold,175,581110,153441
+7,chissana,Without,175,581110,5906
+8,chissana,WithThreshold,200,581110,4836
+9,chissana,Without,200,581110,31890
+10,chissana,WithThreshold,225,581110,112556
+11,chissana,Without,225,581110,25217
+12,chissana,WithThreshold,250,581110,36232
+13,chissana,Without,250,581110,258941
+14,chissana,WithThreshold,275,581110,431042
+15,chissana,Without,275,581110,375067
+16,chissana,WithThreshold,300,581110,70108
+17,chissana,Without,300,581110,85685
+18,chissana,WithThreshold,325,581110,51177
+19,chissana,Without,325,581110,28095

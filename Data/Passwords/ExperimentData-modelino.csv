@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,modelino,WithThreshold,100,23546,30401
+1,modelino,Without,100,23546,28943
+2,modelino,WithThreshold,125,23546,101935
+3,modelino,Without,125,23546,150447
+4,modelino,WithThreshold,150,23546,58718
+5,modelino,Without,150,23546,5132
+6,modelino,WithThreshold,175,23546,49347
+7,modelino,Without,175,23546,251726
+8,modelino,WithThreshold,200,23546,6421
+9,modelino,Without,200,23546,6584
+10,modelino,WithThreshold,225,23546,13630
+11,modelino,Without,225,23546,53485
+12,modelino,WithThreshold,250,23546,87397
+13,modelino,Without,250,23546,58579
+14,modelino,WithThreshold,275,23546,224737
+15,modelino,Without,275,23546,126177
+16,modelino,WithThreshold,300,23546,277816
+17,modelino,Without,300,23546,294977
+18,modelino,WithThreshold,325,23546,138551
+19,modelino,Without,325,23546,209998

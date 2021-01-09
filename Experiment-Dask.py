@@ -236,16 +236,10 @@ def _testRun(poolData):
 
     # Generate penalty scores for each 
     penaltyScores = {}
-    for index, password in enumerate(relevantRockYouPasswords):
-        print(index)
+    for password in relevantRockYouPasswords:
         penaltyScores[password] = _getPenaltyScore(password, digraphProbabilities)
 
     return penaltyScores
-
-
-
-client = Client()
-client.cluster.scale(10) 
 
 xTestWithThreshold = {}
 thresholdValues = range(100, 350, 25)
@@ -261,19 +255,23 @@ n = 3
 testPasswords = random.sample(relevantRockYouPasswords, n)
 
 from itertools import product 
+
 params = list(product(testPasswords, thresholdValues))
 
-testRun = dask.delayed(_testRun)
-futures = []
+inpValues = []
 for param in params: 
     password, threshold = param
     poolData = [xTestWithThreshold[threshold], yTest, password, True]
-    future = testRun(poolData)
-    futures.append(future)
-  
-futures = dask.compute(futures) 
+    inpValues.append(poolData)
+        
+import time
+client = Client()
 
-
+if __name__ == '__main__':
+    init = time.time()
+    futures = client.map(_testRun, inpValues)
+    print("Final time: ", time.time()-init)
+    
     
 
 

@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,mitzimoo,WithThreshold,100,34299,374479
+1,mitzimoo,Without,100,34299,376503
+2,mitzimoo,WithThreshold,125,34299,455330
+3,mitzimoo,Without,125,34299,281636
+4,mitzimoo,WithThreshold,150,34299,534062
+5,mitzimoo,Without,150,34299,338627
+6,mitzimoo,WithThreshold,175,34299,333493
+7,mitzimoo,Without,175,34299,279667
+8,mitzimoo,WithThreshold,200,34299,355953
+9,mitzimoo,Without,200,34299,255990
+10,mitzimoo,WithThreshold,225,34299,568091
+11,mitzimoo,Without,225,34299,126542
+12,mitzimoo,WithThreshold,250,34299,416115
+13,mitzimoo,Without,250,34299,455995
+14,mitzimoo,WithThreshold,275,34299,511615
+15,mitzimoo,Without,275,34299,255688
+16,mitzimoo,WithThreshold,300,34299,94150
+17,mitzimoo,Without,300,34299,248882
+18,mitzimoo,WithThreshold,325,34299,479436
+19,mitzimoo,Without,325,34299,612591

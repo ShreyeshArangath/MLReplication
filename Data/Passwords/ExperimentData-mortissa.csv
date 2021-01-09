@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,mortissa,WithThreshold,100,347733,16055
+1,mortissa,Without,100,347733,7640
+2,mortissa,WithThreshold,125,347733,14715
+3,mortissa,Without,125,347733,13757
+4,mortissa,WithThreshold,150,347733,48489
+5,mortissa,Without,150,347733,1371
+6,mortissa,WithThreshold,175,347733,289688
+7,mortissa,Without,175,347733,3052
+8,mortissa,WithThreshold,200,347733,66503
+9,mortissa,Without,200,347733,27295
+10,mortissa,WithThreshold,225,347733,440025
+11,mortissa,Without,225,347733,623996
+12,mortissa,WithThreshold,250,347733,33500
+13,mortissa,Without,250,347733,193918
+14,mortissa,WithThreshold,275,347733,2825
+15,mortissa,Without,275,347733,90182
+16,mortissa,WithThreshold,300,347733,184521
+17,mortissa,Without,300,347733,1467
+18,mortissa,WithThreshold,325,347733,8037
+19,mortissa,Without,325,347733,107148

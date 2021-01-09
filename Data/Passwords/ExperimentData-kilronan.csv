@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,kilronan,WithThreshold,100,126355,133658
+1,kilronan,Without,100,126355,372268
+2,kilronan,WithThreshold,125,126355,13059
+3,kilronan,Without,125,126355,57576
+4,kilronan,WithThreshold,150,126355,16838
+5,kilronan,Without,150,126355,20250
+6,kilronan,WithThreshold,175,126355,102789
+7,kilronan,Without,175,126355,47007
+8,kilronan,WithThreshold,200,126355,65152
+9,kilronan,Without,200,126355,19977
+10,kilronan,WithThreshold,225,126355,159610
+11,kilronan,Without,225,126355,152297
+12,kilronan,WithThreshold,250,126355,323413
+13,kilronan,Without,250,126355,6175
+14,kilronan,WithThreshold,275,126355,182438
+15,kilronan,Without,275,126355,109965
+16,kilronan,WithThreshold,300,126355,77948
+17,kilronan,Without,300,126355,46117
+18,kilronan,WithThreshold,325,126355,410313
+19,kilronan,Without,325,126355,122230

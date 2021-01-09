@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,ninalive,WithThreshold,100,328558,409883
+1,ninalive,Without,100,328558,32662
+2,ninalive,WithThreshold,125,328558,178367
+3,ninalive,Without,125,328558,20308
+4,ninalive,WithThreshold,150,328558,250699
+5,ninalive,Without,150,328558,92606
+6,ninalive,WithThreshold,175,328558,298843
+7,ninalive,Without,175,328558,43822
+8,ninalive,WithThreshold,200,328558,47546
+9,ninalive,Without,200,328558,28015
+10,ninalive,WithThreshold,225,328558,170615
+11,ninalive,Without,225,328558,25898
+12,ninalive,WithThreshold,250,328558,21220
+13,ninalive,Without,250,328558,96784
+14,ninalive,WithThreshold,275,328558,356306
+15,ninalive,Without,275,328558,448959
+16,ninalive,WithThreshold,300,328558,80156
+17,ninalive,Without,300,328558,386926
+18,ninalive,WithThreshold,325,328558,365507
+19,ninalive,Without,325,328558,200609

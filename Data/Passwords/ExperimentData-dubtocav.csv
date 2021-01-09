@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,dubtocav,WithThreshold,100,540829,288977
+1,dubtocav,Without,100,540829,58334
+2,dubtocav,WithThreshold,125,540829,133161
+3,dubtocav,Without,125,540829,41063
+4,dubtocav,WithThreshold,150,540829,86445
+5,dubtocav,Without,150,540829,123833
+6,dubtocav,WithThreshold,175,540829,33587
+7,dubtocav,Without,175,540829,246911
+8,dubtocav,WithThreshold,200,540829,218467
+9,dubtocav,Without,200,540829,267278
+10,dubtocav,WithThreshold,225,540829,46727
+11,dubtocav,Without,225,540829,105280
+12,dubtocav,WithThreshold,250,540829,200543
+13,dubtocav,Without,250,540829,33086
+14,dubtocav,WithThreshold,275,540829,277332
+15,dubtocav,Without,275,540829,141879
+16,dubtocav,WithThreshold,300,540829,148801
+17,dubtocav,Without,300,540829,314690
+18,dubtocav,WithThreshold,325,540829,221759
+19,dubtocav,Without,325,540829,216843

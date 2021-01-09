@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,rawajati,WithThreshold,100,282869,74805
+1,rawajati,Without,100,282869,465010
+2,rawajati,WithThreshold,125,282869,48456
+3,rawajati,Without,125,282869,32665
+4,rawajati,WithThreshold,150,282869,306034
+5,rawajati,Without,150,282869,140820
+6,rawajati,WithThreshold,175,282869,322939
+7,rawajati,Without,175,282869,61244
+8,rawajati,WithThreshold,200,282869,299793
+9,rawajati,Without,200,282869,470019
+10,rawajati,WithThreshold,225,282869,237467
+11,rawajati,Without,225,282869,2184
+12,rawajati,WithThreshold,250,282869,585153
+13,rawajati,Without,250,282869,363742
+14,rawajati,WithThreshold,275,282869,5478
+15,rawajati,Without,275,282869,51975
+16,rawajati,WithThreshold,300,282869,417292
+17,rawajati,Without,300,282869,271056
+18,rawajati,WithThreshold,325,282869,23714
+19,rawajati,Without,325,282869,549056

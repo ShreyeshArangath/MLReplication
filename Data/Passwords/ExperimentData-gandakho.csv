@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,gandakho,WithThreshold,100,20063,1149
+1,gandakho,Without,100,20063,13627
+2,gandakho,WithThreshold,125,20063,226931
+3,gandakho,Without,125,20063,33746
+4,gandakho,WithThreshold,150,20063,171313
+5,gandakho,Without,150,20063,6250
+6,gandakho,WithThreshold,175,20063,1261
+7,gandakho,Without,175,20063,132310
+8,gandakho,WithThreshold,200,20063,312146
+9,gandakho,Without,200,20063,87596
+10,gandakho,WithThreshold,225,20063,357034
+11,gandakho,Without,225,20063,119629
+12,gandakho,WithThreshold,250,20063,295563
+13,gandakho,Without,250,20063,421707
+14,gandakho,WithThreshold,275,20063,281482
+15,gandakho,Without,275,20063,331054
+16,gandakho,WithThreshold,300,20063,351267
+17,gandakho,Without,300,20063,11839
+18,gandakho,WithThreshold,325,20063,7820
+19,gandakho,Without,325,20063,435901

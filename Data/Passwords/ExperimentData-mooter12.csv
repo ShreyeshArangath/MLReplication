@@ -1,0 +1,21 @@
+,Password,Type,Threshold,Random Guess,Guess
+0,mooter12,WithThreshold,100,113708,336821
+1,mooter12,Without,100,113708,335851
+2,mooter12,WithThreshold,125,113708,35959
+3,mooter12,Without,125,113708,547863
+4,mooter12,WithThreshold,150,113708,603614
+5,mooter12,Without,150,113708,296056
+6,mooter12,WithThreshold,175,113708,306387
+7,mooter12,Without,175,113708,275199
+8,mooter12,WithThreshold,200,113708,23129
+9,mooter12,Without,200,113708,496038
+10,mooter12,WithThreshold,225,113708,189977
+11,mooter12,Without,225,113708,1108
+12,mooter12,WithThreshold,250,113708,19331
+13,mooter12,Without,250,113708,251068
+14,mooter12,WithThreshold,275,113708,74815
+15,mooter12,Without,275,113708,76
+16,mooter12,WithThreshold,300,113708,326546
+17,mooter12,Without,300,113708,57340
+18,mooter12,WithThreshold,325,113708,187644
+19,mooter12,Without,325,113708,464519
