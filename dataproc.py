@@ -60,6 +60,29 @@ cols = ['_ts', 'fn', 'username', 'task0', 'task1', 'task2', 'task3', 'password',
 data = data[cols].reset_index(drop=True).copy(deep=True)
 
 data = data.groupby(["fn"]).filter(lambda x: x['_ts'].count() >= 8)
+data["index"] = data.index
+
+indices = []
+for name in mapping.values():
+    tr = data.loc[data["fn"] == name]
+    sorted_tr = tr.sort_values(by="_ts")
+    if sorted_tr.shape[0] < 8: continue
+    sorted_tr["reduced_ts"] = sorted_tr["_ts"] - sorted_tr["_ts"].tolist()[0]
+    sorted_tr["days"] = sorted_tr["reduced_ts"] / (24 * 60 * 60)
+
+    start = 0.0
+    count = 0
+    for x in range(sorted_tr.shape[0]):
+        if count >= 7: continue
+        if x == 0: indices.append(sorted_tr["index"].tolist()[0])
+        else:
+            if start + 0.7 < sorted_tr["days"].tolist()[x]:
+                indices.append(sorted_tr["index"].tolist()[x])
+                start = sorted_tr["days"].tolist()[x]
+                count += 1
+
+data = data.loc[indices]
+data = data.groupby(["fn"]).filter(lambda x: x['_ts'].count() >= 8)
 
 completed_status = data.groupby('fn').count()['_ts']
 completed_so_far = len(data.groupby("fn").count()["_ts"])
