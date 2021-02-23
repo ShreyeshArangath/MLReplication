@@ -70,19 +70,23 @@ print("Completed so far: \n---------------\n", completed_status,
 n = 8
 df = data.groupby("fn").apply(lambda x: x.sample(n=n, random_state=42))
 
-# ttrating = df.loc[:, cols[3:7]+cols[13:]]
+print(df)
+ttrating = df.loc[:, cols[0:7]+cols[13:]]
+
+# print(ttrating)
+# exit()
 
 
-# def task_to_rating_mapping(row): return [(
-#     row[f'task{x}'], row[f'task{x}Rating']) for x in range(4)]
+def task_to_rating_mapping(row): return [(
+    row[f'task{x}'], row[f'task{x}Rating'], row["_ts"], row["username"]) for x in range(4)]
 
 
-# tasktypes = ["linux", "normal", "personalized", "standard"]
+tasktypes = ["linux", "normal", "personalized", "standard"]
 
 
-# def get_task_to_key(subdf, mapping_function):
-#     tuple_series = subdf.apply(mapping_function, axis=1).values
-#     return list(chain.from_iterable(tuple_series))
+def get_task_to_key(subdf, mapping_function):
+    tuple_series = subdf.apply(mapping_function, axis=1).values
+    return list(chain.from_iterable(tuple_series))
 
 
 # def get_cols_of_X_given_Y(X, Y, row_by_row, groupbyKeys):
@@ -93,8 +97,11 @@ df = data.groupby("fn").apply(lambda x: x.sample(n=n, random_state=42))
 #     return pd.DataFrame(nt2row_by_row_dict)
 
 
-# t2rdf = pd.DataFrame(data=get_task_to_key(
-#     ttrating, task_to_rating_mapping), columns=["Task", "Rating"])
+t2rdf = pd.DataFrame(data=get_task_to_key(
+    ttrating, task_to_rating_mapping), columns=["Task", "Rating", "_ts", "username"])
+
+print(ttrating)
+print(t2rdf)
 
 # nt2rdf = get_cols_of_X_given_Y(
 #     X="Task", Y="Rating", row_by_row=t2rdf, groupbyKeys=tasktypes)
@@ -198,27 +205,30 @@ df = data.groupby("fn").apply(lambda x: x.sample(n=n, random_state=42))
 # ax.plot()
 # plt.show()
 
-nmapping = {f'{i}': key for i, key in enumerate(
-    [chr(x+64) for x in range(27)])}
-username_to_rounds = df.assign(username=df.username.apply(lambda x: f"Person {nmapping[x]}")).groupby(
-    "username").agg(dict(zip([f"task{x}Rating" for x in range(4)], [list for _ in range(4)])))
+# nmapping = {f'{i}': key for i, key in enumerate(
+#     [chr(x+64) for x in range(27)])}
+# username_to_rounds = df.assign(username=df.username.apply(lambda x: f"Person {nmapping[x]}")).groupby(
+#     "username").agg(dict(zip([f"task{x}Rating" for x in range(4)], [list for _ in range(4)])))
 
-u2r = username_to_rounds.reset_index(drop=True)
-u2r = u2r.assign(username=list(map(lambda x: f"Person {nmapping[str(x+1)]}", u2r.index.values))).set_index("username")
+# u2r = username_to_rounds.reset_index(drop=True)
+# u2r = u2r.assign(username=list(map(lambda x: f"Person {nmapping[str(x+1)]}", u2r.index.values))).set_index("username")
 
-print(u2r)
+# print(u2r)
 
 def find_change_over_days(data, column):
     res = dict()
     counter = 0
 
     for x in range(data.shape[0]):
-        row = data[column][x]
-        for y in range(len(row)):
+        row = data.loc[x]
+        if (row[1] != column): continue
+
+        data_row = row[2]
+        for y in range(len(data_row)):
             if y in res:
-                res[y] += row[y]
+                res[y] += data_row[y]
             else:
-                res[y] = row[y]
+                res[y] = data_row[y]
         counter += 1
 
     resvec = []
@@ -227,26 +237,32 @@ def find_change_over_days(data, column):
         resvec.append(res[key])
 
     print(resvec)
+    print(np.mean(resvec))
     return resvec
 
-task0 = find_change_over_days(u2r, "task0Rating")
-task1 = find_change_over_days(u2r, "task1Rating")
-task2 = find_change_over_days(u2r, "task2Rating")
-task3 = find_change_over_days(u2r, "task3Rating")
+# task0 = find_change_over_days(u2r, "task0Rating")
+# task1 = find_change_over_days(u2r, "task1Rating")
+# task2 = find_change_over_days(u2r, "task2Rating")
+# task3 = find_change_over_days(u2r, "task3Rating")
 
 print(df)
-sorted_df = df.sort_values(by='_ts')
+sorted_df = t2rdf.sort_values(by='_ts')
 print(sorted_df)
 
 nmapping = {f'{i}': key for i, key in enumerate(
     [chr(x+64) for x in range(27)])}
-username_to_rounds = sorted_df.assign(username=sorted_df.username.apply(lambda x: f"Person {nmapping[x]}")).groupby(
-    "username").agg(dict(zip([f"task{x}Rating" for x in range(4)], [list for _ in range(4)])))
+username_to_rounds = sorted_df.groupby(
+    ["username", "Task"]).agg(dict(zip([f"Rating" for x in range(4)], [list for _ in range(4)])))
 
-u2r = username_to_rounds.reset_index(drop=True)
-u2r = u2r.assign(username=list(map(lambda x: f"Person {nmapping[str(x+1)]}", u2r.index.values))).set_index("username")
+username_to_rounds = username_to_rounds.reset_index()
+print(username_to_rounds)
+print(username_to_rounds.loc[1])
 
-task0 = find_change_over_days(u2r, "task0Rating")
-task1 = find_change_over_days(u2r, "task1Rating")
-task2 = find_change_over_days(u2r, "task2Rating")
-task3 = find_change_over_days(u2r, "task3Rating")
+# u2r = username_to_rounds.reset_index(drop=True)
+# u2r = u2r.assign(username=list(map(lambda x: f"Person {nmapping[str(x+1)]}", u2r.index.values))).set_index("username")
+# print(u2r)
+
+task0 = find_change_over_days(username_to_rounds, "linux")
+task1 = find_change_over_days(username_to_rounds, "normal")
+task2 = find_change_over_days(username_to_rounds, "personalized")
+task3 = find_change_over_days(username_to_rounds, "standard")
