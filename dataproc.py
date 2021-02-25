@@ -62,6 +62,11 @@ data = data[cols].reset_index(drop=True).copy(deep=True)
 data = data.groupby(["fn"]).filter(lambda x: x['_ts'].count() >= 8)
 data["index"] = data.index
 
+# pd.set_option('display.max_rows', None)
+# pd.set_option('display.max_columns', None)
+# pd.set_option('display.width', None)
+# pd.set_option('display.max_colwidth', -1)
+
 indices = []
 for name in mapping.values():
     tr = data.loc[data["fn"] == name]
@@ -69,6 +74,7 @@ for name in mapping.values():
     if sorted_tr.shape[0] < 8: continue
     sorted_tr["reduced_ts"] = sorted_tr["_ts"] - sorted_tr["_ts"].tolist()[0]
     sorted_tr["days"] = sorted_tr["reduced_ts"] / (24 * 60 * 60)
+    # print(sorted_tr)
 
     start = 0.0
     count = 0
@@ -93,8 +99,13 @@ print("Completed so far: \n---------------\n", completed_status,
 n = 8
 df = data.groupby("fn").apply(lambda x: x.sample(n=n, random_state=42))
 
+# exit()
 print(df)
-ttrating = df.loc[:, cols[0:7]+cols[13:]]
+# save_file = df.drop(columns=["fn"])
+# print(save_file)
+# df.to_csv("filtered_data.csv")
+# exit()
+ttrating = df.loc[:, cols[0:7]+cols[9:]]
 
 # print(ttrating)
 # exit()
@@ -102,6 +113,10 @@ ttrating = df.loc[:, cols[0:7]+cols[13:]]
 
 def task_to_rating_mapping(row): return [(
     row[f'task{x}'], row[f'task{x}Rating'], row["_ts"], row["username"]) for x in range(4)]
+
+
+def task_to_submission_mapping(row): return [(
+    row[f'task{x}'], row[f'task{x}NumSubmissions'], row["_ts"], row["username"]) for x in range(4)]
 
 
 tasktypes = ["linux", "normal", "personalized", "standard"]
@@ -122,6 +137,8 @@ def get_task_to_key(subdf, mapping_function):
 
 t2rdf = pd.DataFrame(data=get_task_to_key(
     ttrating, task_to_rating_mapping), columns=["Task", "Rating", "_ts", "username"])
+# t2rdf = pd.DataFrame(data=get_task_to_key(
+#     ttrating, task_to_submission_mapping), columns=["Task", "Rating", "_ts", "username"])
 
 print(ttrating)
 print(t2rdf)
@@ -242,12 +259,14 @@ def find_change_over_days(data, column):
     res = dict()
     counter = 0
 
+    total = []
     for x in range(data.shape[0]):
         row = data.loc[x]
         if (row[1] != column): continue
 
         data_row = row[2]
         for y in range(len(data_row)):
+            total.append(data_row[y])
             if y in res:
                 res[y] += data_row[y]
             else:
@@ -260,8 +279,27 @@ def find_change_over_days(data, column):
         resvec.append(res[key])
 
     print(resvec)
+    # base = len(total) * 2.0
+    # print(base)
+    # print(sum(total))
+    # print((sum(total) - base) / sum(total))
     print(np.mean(resvec))
+    print(np.std(total))
     return resvec
+
+def grab_values_at_index(data, column, index):
+    res = dict()
+    counter = 0
+
+    total = []
+    for x in range(data.shape[0]):
+        row = data.loc[x]
+        if (row[1] != column): continue
+
+        data_row = row[2]
+        total.append(data_row[index])
+
+    return total
 
 # task0 = find_change_over_days(u2r, "task0Rating")
 # task1 = find_change_over_days(u2r, "task1Rating")
@@ -289,3 +327,93 @@ task0 = find_change_over_days(username_to_rounds, "linux")
 task1 = find_change_over_days(username_to_rounds, "normal")
 task2 = find_change_over_days(username_to_rounds, "personalized")
 task3 = find_change_over_days(username_to_rounds, "standard")
+
+linux_0 = grab_values_at_index(username_to_rounds, "linux", 0)
+normal_0 = grab_values_at_index(username_to_rounds, "normal", 0)
+pers_0 = grab_values_at_index(username_to_rounds, "personalized", 0)
+stand_0 = grab_values_at_index(username_to_rounds, "standard", 0)
+
+linux_7 = grab_values_at_index(username_to_rounds, "linux", 7)
+normal_7 = grab_values_at_index(username_to_rounds, "normal", 7)
+pers_7 = grab_values_at_index(username_to_rounds, "personalized", 7)
+stand_7 = grab_values_at_index(username_to_rounds, "standard", 7)
+
+from scipy.stats import wilcoxon
+
+res_linux_normal = wilcoxon(linux_0, normal_0, alternative="two-sided")
+print(res_linux_normal.statistic)
+print(res_linux_normal.pvalue)
+
+res_linux_pers = wilcoxon(linux_0, pers_0, alternative="two-sided")
+print(res_linux_pers.statistic)
+print(res_linux_pers.pvalue)
+
+res_linux_standard = wilcoxon(linux_0, stand_0, alternative="two-sided")
+print(res_linux_standard.statistic)
+print(res_linux_standard.pvalue)
+
+
+res_linux_normal7 = wilcoxon(linux_7, normal_7, alternative="two-sided")
+print(res_linux_normal7.statistic)
+print(res_linux_normal7.pvalue)
+
+res_linux_pers7 = wilcoxon(linux_7, pers_7, alternative="two-sided")
+print(res_linux_pers7.statistic)
+print(res_linux_pers7.pvalue)
+
+res_linux_standard7 = wilcoxon(linux_7, stand_7, alternative="two-sided")
+print(res_linux_standard7.statistic)
+print(res_linux_standard7.pvalue)
+
+res_linux0_linux7 = wilcoxon(linux_0, linux_7, alternative="two-sided")
+print(res_linux0_linux7.statistic)
+print(res_linux0_linux7.pvalue)
+
+res_pers0_pers7 = wilcoxon(pers_0, pers_7, alternative="two-sided")
+print(res_pers0_pers7.statistic)
+print(res_pers0_pers7.pvalue)
+
+# res_linux_normal = wilcoxon(task0, task1, alternative="two-sided")
+# print(res_linux_normal.statistic)
+# print(res_linux_normal.pvalue)
+
+# res_linux_pers = wilcoxon(task0, task2, alternative="two-sided")
+# print(res_linux_pers.statistic)
+# print(res_linux_pers.pvalue)
+
+# res_linux_standard = wilcoxon(task0, task3, alternative="two-sided")
+# print(res_linux_standard.statistic)
+# print(res_linux_standard.pvalue)
+
+# res_normal_pers = wilcoxon(task1, task2, alternative="two-sided")
+# print(res_normal_pers.statistic)
+# print(res_normal_pers.pvalue)
+
+# res_normal_standard = wilcoxon(task1, task3, alternative="two-sided")
+# print(res_normal_standard.statistic)
+# print(res_normal_standard.pvalue)
+
+# res_personalized_standard = wilcoxon(task2, task3, alternative="two-sided")
+# print(res_personalized_standard.statistic)
+# print(res_personalized_standard.pvalue)
+
+
+def calculate_wilcoxon_signed_rank_test(series_one, series_two):
+    abs_list = []
+    sign_list = []
+
+    for idx in range(len(series_one)):
+        base = series_two[idx] - series_one[idx]
+        if abs(base) == 0: continue
+
+        abs_list.append(abs(base))
+        sign = 0
+        if base > 0:
+            sign = 1
+        elif base < 0:
+            sign = -1
+
+        abs_list.append(sign)
+    
+    Nr = len(abs_list)
+
